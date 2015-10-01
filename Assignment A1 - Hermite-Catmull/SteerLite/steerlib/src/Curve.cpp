@@ -45,15 +45,19 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 {
 #ifdef ENABLE_GUI
 
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
-	{
-		std::cerr << "ERROR>>>>Member function drawCurve is not implemented!" << std::endl;
-		flag = true;
-	}
-	//=========================================================================
+	//Number of points
+	//std::cout << "\n" << controlPoints.size();
 
+	for (int i = 0; i < controlPoints.size(); i++)
+	{
+		float step = (float)i / (float)window;
+		//std::cout << "\n point: " << i <<  " " << controlPoints[i].time;
+		if (i + 1 < controlPoints.size())
+		{
+			DrawLib::drawLine(controlPoints[i].position, controlPoints[i + 1].position, curveColor, curveThickness);
+		}
+	}
+	
 	// Robustness: make sure there is at least two control point: start and end points
 
 	// Move on the curve from t=0 to t=finalPoint, using window as step size, and linearly interpolate the curve points
@@ -65,58 +69,53 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 // Sort controlPoints vector in ascending order: min-first
 void Curve::sortControlPoints()
 {
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
+	//Sort control points based on time it takes to travel from start point
+	std::vector<CurvePoint> points = getControPoints(); //Control points in curve
+	std::vector<int> distances(points.size()); //List of stored distances
+	std::vector<CurvePoint> sortedPoints = getControPoints(); //List of sorted control points
+
+	int numPoints = controlPoints.size();
+
+	while (points.size() > 0)
 	{
-		std::cerr << "ERROR>>>>Member function sortControlPoints is not implemented!" << std::endl;
-		//Sort control points based on time it takes to travel from start point
-		std::vector<CurvePoint> points = getControPoints(); //Control points in curve
-		std::vector<int> distances(points.size()); //List of stored distances
-		std::vector<CurvePoint> sortedPoints = getControPoints(); //List of sorted control points
-		
-		int numPoints = controlPoints.size();
+		Util::CurvePoint lo = points[0];
+		int index = 0;
 
-		while (points.size() > 0)
+		for (int i = 0; i < points.size(); i++) //Loop through all points and find the one with the shortest distance
 		{
-			//Util::CurvePoint * lo = new Util::CurvePoint(Point(0,0,0), Vector(0,0,0), -1);
-			Util::CurvePoint lo = points[0];
-			int index = 0;
-
-			for (int i = 0; i < points.size(); i++) //Loop through all points and find the one with the shortest distance
+			if (points[i].time < lo.time)
 			{
-				if (points[i].time < lo.time)
-				{
-					lo = points[i];
-					index = i;
-				}
+				lo = points[i];
+				index = i;
 			}
-
-			//Add lo to the sorted list
-			sortedPoints[numPoints - points.size()] = lo;
-
-			//Remove lo from points
-			points.erase(points.begin() + index);
 		}
 
-		//Print points to make sure they are in order
-		for (int i = 0; i < sortedPoints.size(); i++)
-		{
-			std::cout << i << " " << sortedPoints[i].time << "\n";
-		}
+		//Add lo to the sorted list
+		sortedPoints[numPoints - points.size()] = lo;
 
-		controlPoints = sortedPoints;
-
-		std::vector<CurvePoint> controlTemp = getControPoints();
-		std::cout << "\ncontrolPoints contains (position, tangent, time):\n";
-		for (std::vector<CurvePoint>::iterator it = controlTemp.begin(); it != controlTemp.end(); ++it)
-		{
-			std::cout << "position: " << it->position << ", tangent: " << it->tangent << ", time: " << it->time << "\n";
-		}
-
-		flag = true;
+		//Remove lo from points
+		points.erase(points.begin() + index);
 	}
-	//=========================================================================
+
+	/*
+	//Print control points (check to make sure they are in order). Agent points are printed followed by camera points.
+	std::cout << "Before sort\n";
+
+	for (int i = 0; i < controlPoints.size(); i++)
+	{
+		std::cout << "Control Point: " << i << "Position: " << controlPoints[i].position << "Time: " << controlPoints[i].time << "\n";
+	}
+
+	controlPoints = sortedPoints;
+
+	std::cout << "After sort\n";
+
+	//Print control points (check to make sure they are in order)
+	for (int i = 0; i < controlPoints.size(); i++)
+	{
+		std::cout << "Control Point: " << i << "Position: " << controlPoints[i].position << "Time: " << controlPoints[i].time << "\n";
+	}
+	*/
 
 	return;
 }
@@ -127,7 +126,7 @@ bool Curve::calculatePoint(Point& outputPoint, float time)
 	// Robustness: make sure there is at least two control point: start and end points
 	if (!checkRobust())
 		return false;
-
+	
 	// Define temporary parameters for calculation
 	unsigned int nextPoint;
 	float normalTime, intervalTime;
@@ -135,7 +134,7 @@ bool Curve::calculatePoint(Point& outputPoint, float time)
 	// Find the current interval in time, supposing that controlPoints is sorted (sorting is done whenever control points are added)
 	if (!findTimeInterval(nextPoint, time))
 		return false;
-
+	
 	// Calculate position at t = time on curve
 	if (type == hermiteCurve)
 	{
@@ -169,15 +168,40 @@ bool Curve::checkRobust()
 // Find the current time interval (i.e. index of the next control point to follow according to current time)
 bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 {
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
-	{
-		std::cerr << "ERROR>>>>Member function findTimeInterval is not implemented!" << std::endl;
-		flag = true;
-	}
-	//=========================================================================
+	//Normalized time
+	int maxTime = controlPoints[controlPoints.size()-1].time;
+	
+	float normalizedTime = time / maxTime;
 
+	//Find out which control point is the current target
+	float p0Interval = controlPoints[0].time / (maxTime); //0.0
+	float p1Interval = controlPoints[1].time / (maxTime); //0.33
+	float p2Interval = controlPoints[2].time / (maxTime); //0.66
+	float p3Interval = controlPoints[3].time / (maxTime); //1.0
+
+	std::vector<float> subcurveTime(controlPoints.size() - 1); //Vector holding the time it takes to reach each control point
+
+	for (int i = 1; i < controlPoints.size(); i++)
+	{
+		subcurveTime[i - 1] = controlPoints[i].time;
+	}
+
+	for (int i = 0; i < subcurveTime.size(); i++) //Determine which is the next target controlpoint based on current time
+	{
+		if (time <= subcurveTime[nextPoint])
+		{
+			break;
+		}
+		else 
+		{
+			nextPoint++;
+		}
+	}
+
+	if (time >= controlPoints[controlPoints.size()-1].time) //End simulation once agent reaches final point
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -185,46 +209,166 @@ bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 // Implement Hermite curve
 Point Curve::useHermiteCurve(const unsigned int nextPoint, const float time)
 {
-	Point newPosition;
+	Point newPosition; //Next position agent will be at
 	float normalTime, intervalTime;
 
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
+	int maxTime = controlPoints[controlPoints.size() - 1].time; //Time it will take to finish entire traversal
+
+	//Normalized time
+	normalTime = time / maxTime;
+
+	float totalCompleted = normalTime; //Location of agent in terms of entire curve (when normalTime = 1, curve is completed)
+
+	float localCompleted; //Location of agent in terms of the current segment
+
+	std::vector<float> subcurveTime(controlPoints.size()-1); //Vector holding the time it takes to reach each control point
+
+	for (int i = 1; i < controlPoints.size(); i++)
 	{
-		std::cerr << "ERROR>>>>Member function useHermiteCurve is not implemented!" << std::endl;
-		flag = true;
+		subcurveTime[i-1] = controlPoints[i].time;
 	}
-	//=========================================================================
 
+	float prevSegTime = 0; //Amount of time it took to reach previous control point
 
-	// Calculate time interval, and normal time required for later curve calculations
+	if (nextPoint == 0)
+	{
+		prevSegTime = 0;
+	}
+	else 
+	{
+		prevSegTime = subcurveTime[nextPoint - 1];
+	}
 
-	// Calculate position at t = time on Hermite curve
+	localCompleted = (time-prevSegTime) / (subcurveTime[nextPoint]-prevSegTime); //Point along local segment where agent must move next
 
-	// Return result
+	//std::cout << "\n traversed: " << totalCompleted << " segment " << subcurveTime[nextPoint] << " time " << time;
+
+	//Get lerp time
+	intervalTime = localCompleted;
+	
+	float t = intervalTime;
+	float t2 = t*t;
+	float t3 = t*t*t;
+
+	// Calculate position at t = time on Hermite curve, tangents control curve height
+	float p1 = ((2)*(t3))-((3)*(t2))+(1);
+	float p2 = ((-2)*(t3))+((3)*(t2));
+	float h1 = (t3)-((2)*(t2))+(t);
+	float h2 = (t3)-(t2);
+
+	//std::cout << "\n p1:" << p1 << " p2: " << p2 << " h1: " << h1 << " h2: " << h2;
+	//std::cout << "\n lc:" << t << " nt: " << normalTime << " time: " << time;
+
+	if (nextPoint == controlPoints.size())
+	{
+		newPosition = controlPoints[controlPoints.size() - 1].position;
+	}
+	else 
+	{
+		newPosition =
+			p1*controlPoints[nextPoint].position +
+			p2*controlPoints[nextPoint + 1].position +
+			h1*controlPoints[nextPoint].tangent +
+			h2*controlPoints[nextPoint + 1].tangent
+			;
+	}
+
 	return newPosition;
 }
 
 // Implement Catmull-Rom curve
 Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
-{
-	Point newPosition;
+{	
+	Point newPosition; //Next position agent will be at
+	float normalTime, intervalTime;
 
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
+	int point0 = 0;
+	int point1 = 1;
+	int point2 = 2;
+	int point3 = 3;
+
+	int maxTime = controlPoints[controlPoints.size() - 1].time; //Time it will take to finish entire traversal
+
+	//Normalized time
+	normalTime = time / maxTime;
+
+	float totalCompleted = normalTime; //Location of agent in terms of entire curve (when normalTime = 1, curve is completed)
+
+	float localCompleted; //Location of agent in terms of the current segment
+
+	std::vector<float> subcurveTime(controlPoints.size() - 1); //Vector holding the time it takes to reach each control point
+
+	for (int i = 1; i < controlPoints.size(); i++)
 	{
-		std::cerr << "ERROR>>>>Member function useCatmullCurve is not implemented!" << std::endl;
-		flag = true;
+		subcurveTime[i - 1] = controlPoints[i].time;
 	}
-	//=========================================================================
 
+	float prevSegTime = 0; //Amount of time it took to reach previous control point
 
-	// Calculate time interval, and normal time required for later curve calculations
+	if (nextPoint == 0)
+	{
+		prevSegTime = 0;
+	}
+	else
+	{
+		prevSegTime = subcurveTime[nextPoint - 1];
+	}
 
-	// Calculate position at t = time on Catmull-Rom curve
-	
-	// Return result
+	localCompleted = (time - prevSegTime) / (subcurveTime[nextPoint] - prevSegTime); //Point along local segment where agent must move next
+
+	//std::cout << "\n traversed: " << totalCompleted << " segment " << subcurveTime[nextPoint] << " time " << time;
+
+	//Get lerp time
+	intervalTime = localCompleted;
+
+	float t = intervalTime;
+	float t2 = t*t;
+	float t3 = t*t*t;
+
+	// Calculate position at t = time on Hermite curve, tangents control curve height
+	float p1 = 0.5f*(((-1)*(t3)) + ((2)*(t2)) + (t));
+	float p2 = 0.5f*(((3)*(t3)) - ((5)*(t2)) + (2));
+	float p3 = 0.5f*(((-3)*(t3))+((4)*(t2)) + (t));
+	float p4 = 0.5f*((t3)-(t2));
+
+	//std::cout << "\n p1:" << p1 << " p2: " << p2 << " p3: " << p3 << " p4: " << p4;
+	//std::cout << "\n lc:" << t << " nt: " << normalTime << " time: " << time;
+
+	if (nextPoint == controlPoints.size())
+	{
+		newPosition = controlPoints[controlPoints.size() - 1].position;
+	}
+	else
+	{
+		if (nextPoint == 0)
+		{
+			newPosition =
+				p1*controlPoints[nextPoint].position +
+				p2*controlPoints[nextPoint].position +
+				p3*controlPoints[nextPoint + 1].position +
+				p4*controlPoints[nextPoint + 2].position
+				;
+		}
+		if (nextPoint == 1)
+		{
+			newPosition =
+				p1*controlPoints[nextPoint-1].position +
+				p2*controlPoints[nextPoint].position +
+				p3*controlPoints[nextPoint+1].position +
+				p4*controlPoints[nextPoint+2].position
+				;
+		}
+		else if (nextPoint == 2)
+		{
+			newPosition =
+				p1*controlPoints[nextPoint].position +
+				p2*controlPoints[nextPoint].position +
+				p3*controlPoints[nextPoint].position +
+				p4*controlPoints[nextPoint].position
+				;
+		}
+
+	}
+
 	return newPosition;
 }
