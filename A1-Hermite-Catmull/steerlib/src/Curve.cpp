@@ -229,7 +229,16 @@ bool Curve::checkRobust()
 	{
 		//std::cout << "\n time: " << controlPoints[0].time << " " << controlPoints[1].time << " " << controlPoints[2].time << " " << controlPoints[3].time;
 	}
-	if (controlPoints.size() < 2) {
+	
+	if (getType() < 0 || getType() > 1) {
+		//std::cout << "\n __Not a Curve";
+		return false;
+	}
+	if (getType() == 0 && controlPoints.size() < 2) {
+		//std::cout << "\n __Not Robust";
+		return false;
+	}
+	if (getType() == 1 && controlPoints.size() < 4) {
 		//std::cout << "\n __Not Robust";
 		return false;
 	}
