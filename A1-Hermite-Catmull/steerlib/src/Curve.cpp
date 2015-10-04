@@ -44,7 +44,9 @@ void Curve::addControlPoints(const std::vector<CurvePoint>& inputPoints)
 void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 {
 #ifdef ENABLE_GUI
-	curveThickness *= 2;
+	//std::cout << "\n num: " << controlPoints.size();
+
+	curveThickness *= 1.25f;
 	window = 1; //Remove this line before submitting
 	for (int i = 4; i < controlPoints.size(); i += window)
 	{
@@ -150,14 +152,26 @@ bool Curve::calculatePoint(Point& outputPoint, float time)
 // Check Roboustness
 bool Curve::checkRobust()
 {
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
+	//Check to make sure there are no control points with duplicate times
+	for (int i = 0; i < 4; i++)
 	{
-		std::cerr << "ERROR>>>>Member function checkRobust is not implemented!" << std::endl;
-		flag = true;
+		float currTime = controlPoints[i].time;
+
+		if (i + 1 < controlPoints.size()-1)
+		{
+			if (controlPoints[i + 1].time == currTime) //Next goal point in current list has the same time, so remove current index
+			{
+				controlPoints.erase(controlPoints.begin() + i+1);
+				sortControlPoints();
+				i--;
+			}
+		}
 	}
-	//=========================================================================
+
+	for (int i = 0; i < controlPoints.size()-1; i++)
+	{
+		std::cout << "\n time: " << controlPoints[0].time << " " << controlPoints[1].time << " " << controlPoints[2].time << " " << controlPoints[3].time;
+	}
 
 
 	return true;
@@ -170,12 +184,6 @@ bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 	int maxTime = controlPoints[controlPoints.size()-1].time;
 	
 	float normalizedTime = time / maxTime;
-
-	//Find out which control point is the current target
-	float p0Interval = controlPoints[0].time / (maxTime); //0.0
-	float p1Interval = controlPoints[1].time / (maxTime); //0.33
-	float p2Interval = controlPoints[2].time / (maxTime); //0.66
-	float p3Interval = controlPoints[3].time / (maxTime); //1.0
 
 	std::vector<float> subcurveTime(controlPoints.size() - 1); //Vector holding the time it takes to reach each control point
 
@@ -195,7 +203,6 @@ bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 			nextPoint++;
 		}
 	}
-
 
 	return true;
 }
@@ -283,20 +290,17 @@ Point Curve::useHermiteCurve(const unsigned int nextPoint, const float time)
 			h2*controlPoints[nextPoint + 1].tangent.z*curveFactor
 			;
 	}
-
+	/*
 	//Lock camera/agent to last point once time runs out
 	if (nextPoint == controlPoints.size()-1 && time >= maxTime)
 	{
-		endPoint.x = -50;
-		endPoint.y = 10;
-		endPoint.z = 0;
 		return endPoint;
 	}
 
 	CurvePoint myPoint = controlPoints[nextPoint];
 	myPoint.position = newPosition;
 	addControlPoint(myPoint);
-
+	*/
 	//std::cout << "\n pos: " << newPosition;
 	return newPosition;
 }
@@ -361,32 +365,23 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 	float p3 = 0.5f*(((-3)*(t3)) + ((4)*(t2)) + (t));
 	float p4 = 0.5f*((t3)-(t2));
 
-	float curveFactor = (150 - controlPoints[nextPoint].time) / ((controlPoints[nextPoint + 1].time) - controlPoints[nextPoint].time);
-
-	curveFactor = time;
-	curveFactor /= 10;
-	curveFactor = 1;
-
 	newPosition =
 		p1*controlPoints[point0].position +
 		p2*controlPoints[point1].position +
 		p3*controlPoints[point2].position +
 		p4*controlPoints[point3].position
 		;
-
+	/*
 	//Lock camera/agent to last point once time runs out
 	if (nextPoint == controlPoints.size() - 1 && time >= maxTime)
 	{
-		endPoint.x = -50;
-		endPoint.y = 10;
-		endPoint.z = 0;
 		return endPoint;
 	}
 
 	CurvePoint myPoint = controlPoints[nextPoint];
 	myPoint.position = newPosition;
 	addControlPoint(myPoint);
-
+	*/
 	//std::cout << "\n p0: " << point0 << " p1: " << point1 << " p2: " << point2 << " p3: " << point3;
 	//std::cout << "\n pos: " << newPosition;
 	return newPosition;
