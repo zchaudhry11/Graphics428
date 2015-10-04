@@ -206,6 +206,7 @@ bool Curve::checkRobust()
 	}
 
 	//std::cout << "\n controlpoints: " << controlPoints.size();
+	//std::cout << "\n numPoints: " << controlPoints.size();
 	//std::cout << "\n INITIATED ROBUSTCHECK!";
 	//Check to make sure there are no control points with duplicate times
 	for (int i = 0; i < numPoints; i++)
@@ -228,6 +229,11 @@ bool Curve::checkRobust()
 	{
 		//std::cout << "\n time: " << controlPoints[0].time << " " << controlPoints[1].time << " " << controlPoints[2].time << " " << controlPoints[3].time;
 	}
+	if (controlPoints.size() < 2) {
+		//std::cout << "\n __Not Robust";
+		return false;
+	}
+	//std::cout << "\n __Robust";
 
 	return true;
 }
