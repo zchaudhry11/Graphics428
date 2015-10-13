@@ -2,21 +2,47 @@
 using System.Collections;
 
 public class MoveTo : MonoBehaviour {
-    NavMeshAgent agent;
+    private NavMeshAgent navAgent;
+    //private Animator anim;
+    private bool select;
+    private bool set = false;
+    private Vector3 MoveD;
 	// Use this for initialization
 	void Start () {
-        agent = GetComponent<NavMeshAgent>();
+        //anim = GetComponent<Animator>();
+        navAgent = GetComponent<NavMeshAgent>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	    if(Input.GetMouseButtonDown(0))
+        if (select && set)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
-            {
-                agent.destination = hit.point;
-            }
+            navAgent.destination = MoveD;
+            //anim.SetTrigger("Move");
+        }
+        if (navAgent.pathStatus == NavMeshPathStatus.PathComplete)
+        {
+            set = false;
         }
 	}
+
+    void Select(int x)
+    {
+        Debug.Log("Player Logged");
+        select = true;
+    }
+
+    void Deselect(int x)
+    {
+        Debug.Log("Player Delogged");
+        select = false;
+    }
+
+    void Destination (Vector3 dest)
+    {
+        Debug.Log("Destination Set");
+        MoveD = dest;
+        set = true;
+    }
+    
 }
