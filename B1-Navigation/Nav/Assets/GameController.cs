@@ -16,9 +16,9 @@ public class GameController : MonoBehaviour {
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
             {
-                if (hit.transform.tag == "Player")
+                if (hit.transform.tag == "Player");
                 {
-                    if (selectObject != null)
+                    if (selectObject != null && Input.GetKeyDown(KeyCode.LeftShift) != true)
                     {
                         Debug.Log("Player Deselected");
                         selectObject.SendMessage("Deselect", 1);
@@ -28,7 +28,7 @@ public class GameController : MonoBehaviour {
                     selectObject.SendMessage("Select", 1);
 
                 }
-                if (hit.transform.tag == "Ground")
+                if (hit.transform.tag == "Ground" && selectObject != null)
                 {
                     Debug.Log("Player Deselected");
                     selectObject.SendMessage("Deselect", 1);
