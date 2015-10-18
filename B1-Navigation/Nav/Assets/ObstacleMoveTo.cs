@@ -17,7 +17,6 @@ public class ObstacleMoveTo : MonoBehaviour {
 		if (select && set)
 		{
 			navAgent.destination = MoveD;
-			//anim.SetTrigger("Move");
 		}
 		if (navAgent.pathStatus == NavMeshPathStatus.PathComplete)
 		{

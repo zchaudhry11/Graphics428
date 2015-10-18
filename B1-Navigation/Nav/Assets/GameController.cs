@@ -19,26 +19,19 @@ public class GameController : MonoBehaviour {
             {
                 if (hit.transform.tag == "Player")
                 {
-                    /*if (selectObject != null && Input.GetKeyDown(KeyCode.LeftShift) != true)
-                    {
-                        
-                        Debug.Log("Player Deselected");
-                        GameObject[] deselect = GameObject.FindGameObjectsWithTag("Selected");
-                        for (int i = 0; i < deselect.Length; i++)
-                        {
-                            deselect[i].SendMessage("Deselect", 1);
-                            deselect[i].tag = "Player";
-                        }
-                       // selectObject.SendMessage("Deselect", 1);
-                    }*/
+                    
                     Debug.Log("Player Selected");
                     selectObject = hit.transform.gameObject;
-                    selectObject.tag = "Selected";
-                    selectObject.SendMessage("Select", 1);
+                    if (selectObject != null)
+                    {
+                        selectObject.tag = "Selected";
+                        selectObject.SendMessage("Select", 1);
+                    }
 
                 }
 				if(hit.transform.tag == "Cube")
 				{
+                    Debug.Log("Cube Selected");
 					selectObject = hit.transform.gameObject;
 					if(selectObject != null)
 					{
@@ -54,9 +47,6 @@ public class GameController : MonoBehaviour {
                         deselect[i].SendMessage("Deselect", 1);
                         deselect[i].tag = "Player";
                     }
-                    //selectObject = hit.transform.gameObject;
-                    //selectObject.tag = "Player";
-                    //selectObject.SendMessage("Deselect", 1);
                 }
                 if (hit.transform.tag == null)
                 {
@@ -71,7 +61,7 @@ public class GameController : MonoBehaviour {
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
             {
-                if (hit.transform.tag != null && selectObject != null)
+                if (hit.transform.tag != null && selectObject != null && GameObject.FindGameObjectsWithTag("Selected").Length != 0)
                 {
                     Debug.Log("Destination Selected");
                     GameObject[] setDest = GameObject.FindGameObjectsWithTag("Selected");
