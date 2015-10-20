@@ -1,0 +1,9 @@
+﻿Build started 10/20/2015 3:04:30 AM.
+     1>Project "C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\build\win32\steerlib.vcxproj" on node 2 (Build target(s)).
+     1>Link:
+         steerlib.vcxproj -> C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\build\win32\Release\steerlib.dll
+     1>Done Building Project "C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\build\win32\steerlib.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.07
