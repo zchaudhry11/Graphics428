@@ -210,7 +210,7 @@
       <Filter>Source Files\obstacles</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\GJK_EPA.cpp">
-      <Filter>Source Files\util</Filter>
+      <Filter>Source Files\obstacles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

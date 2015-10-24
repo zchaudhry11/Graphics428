@@ -15,6 +15,7 @@
 
 #include "LogObject.h"
 #include "LogManager.h"
+
 #include "obstacles/GJK_EPA.h"
 
 
