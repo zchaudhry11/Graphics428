@@ -1,4 +1,4 @@
-﻿Build started 10/23/2015 8:39:06 PM.
+﻿Build started 10/25/2015 11:09:47 PM.
      1>Project "C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\build\win32\steerlib.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /I..\..\..\util\include /I..\..\include /I..\..\..\external /Zi /nologo /W3 /WX- /MP /O2 /Oi /Ot /GL /D _COMPILING_WIN32_STEERLIB /D ENABLE_GUI /D _WINDLL /D _MBCS /Gm- /EHsc /MD /GS /Gy /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /errorReport:prompt ..\..\src\AgentMetricsCollector.cpp ..\..\src\BehaviorParameter.cpp ..\..\src\Behaviour.cpp ..\..\src\BenchmarkEngine.cpp ..\..\src\CompositeTechnique01.cpp ..\..\src\CompositeTechnique02.cpp ..\..\src\CompositeTechniquePLE.cpp ..\..\src\Curve.cpp ..\..\src\FrameSaver.cpp ..\..\src\GJK_EPA.cpp ..\..\src\OrientedWallObstacle.cpp ..\..\src\PolygonObstacle.cpp ..\..\src\SimulationMetricsCollector.cpp ..\..\src\GridDatabase2D.cpp ..\..\src\CommandLineParser.cpp ..\..\src\DrawLib.cpp ..\..\src\DynamicLibrary.cpp ..\..\src\HighResCounter.cpp ..\..\src\MemoryMapper.cpp ..\..\src\Misc.cpp ..\..\src\PerformanceProfiler.cpp ..\..\src\StateMachine.cpp ..\..\src\ThreadedTaskManager.cpp ..\..\src\XMLParser.cpp ..\..\src\RecFileReader.cpp ..\..\src\RecFileWriter.cpp ..\..\src\TestCaseReader.cpp ..\..\src\TestCaseReaderPrivate.cpp ..\..\src\TestCaseWriter.cpp ..\..\src\Camera.cpp ..\..\src\Clock.cpp ..\..\src\SimulationEngine.cpp ..\..\src\SimulationOptions.cpp ..\..\src\SteeringCommand.cpp ..\..\src\BoxObstacle.cpp ..\..\src\CircleObstacle.cpp ..\..\src\OrientedBoxObstacle.cpp ..\..\src\RecFilePlayerModule.cpp ..\..\src\SimulationRecorderModule.cpp ..\..\src\TestCasePlayerModule.cpp ..\..\..\external\tinyxml\ticpp.cpp ..\..\..\external\tinyxml\tinystr.cpp ..\..\..\external\tinyxml\tinyxml.cpp ..\..\..\external\tinyxml\tinyxmlerror.cpp ..\..\..\external\tinyxml\tinyxmlparser.cpp
@@ -6,40 +6,40 @@
      1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
      1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
      1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
-     1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
-     1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
          AgentMetricsCollector.cpp
+     1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
          BehaviorParameter.cpp
      1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
      1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
          Behaviour.cpp
-         BenchmarkEngine.cpp
      1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
+         BenchmarkEngine.cpp
          CompositeTechnique01.cpp
          CompositeTechnique02.cpp
          CompositeTechniquePLE.cpp
+     1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
          Curve.cpp
-     1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\CompositeTechnique02.cpp)
-     1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\CompositeTechnique01.cpp)
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\CompositeTechnique02.cpp)
+     1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\CompositeTechniquePLE.cpp)C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\CompositeTechnique01.cpp)
+         
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\CompositeTechnique01.cpp)
-         C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\CompositeTechnique02.cpp)
-         C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\CompositeTechnique01.cpp)
-     1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\CompositeTechniquePLE.cpp)
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\CompositeTechniquePLE.cpp)
-         C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\CompositeTechniquePLE.cpp)
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\BenchmarkEngine.cpp)
+         C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\CompositeTechnique01.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\BenchmarkEngine.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\BenchmarkEngine.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\CompositeTechniquePLE.cpp)
+         C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\CompositeTechniquePLE.cpp)
+     1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\CompositeTechnique02.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\CompositeTechnique02.cpp)
+         C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\CompositeTechnique02.cpp)
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\AgentMetricsCollector.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\AgentMetricsCollector.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\AgentMetricsCollector.cpp)
      1>..\..\src\Curve.cpp(82): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+         FrameSaver.cpp
      1>..\..\src\Curve.cpp(111): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
      1>..\..\src\Curve.cpp(145): warning C4101: 'intervalTime': unreferenced local variable
      1>..\..\src\Curve.cpp(145): warning C4101: 'normalTime': unreferenced local variable
      1>..\..\src\Curve.cpp(230): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-         FrameSaver.cpp
      1>..\..\src\Curve.cpp(267): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
      1>..\..\src\Curve.cpp(365): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
      1>..\..\src\Curve.cpp(366): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
@@ -47,10 +47,10 @@
      1>..\..\src\Curve.cpp(368): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
      1>..\..\src\Curve.cpp(370): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
          GJK_EPA.cpp
-     1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\CompositeTechnique02.cpp)
-     1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\CompositeTechnique01.cpp)
      1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\CompositeTechniquePLE.cpp)
      1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\BenchmarkEngine.cpp)
+     1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\CompositeTechnique01.cpp)
+     1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\CompositeTechnique02.cpp)
          OrientedWallObstacle.cpp
      1>..\..\src\FrameSaver.cpp(47): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
          C:\Program Files (x86)\Windows Kits\10\Include\10.0.10150.0\ucrt\string.h(119): note: see declaration of 'strcpy'
@@ -72,6 +72,7 @@
                      _Ty=SteerLib::OrientedBoxObstacle *
                  ] (compiling source file ..\..\src\OrientedWallObstacle.cpp)
          DynamicLibrary.cpp
+         HighResCounter.cpp
      1>..\..\src\OrientedWallObstacle.cpp(40): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
      1>..\..\src\OrientedWallObstacle.cpp(42): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
      1>..\..\src\OrientedWallObstacle.cpp(60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
@@ -79,7 +80,9 @@
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\PolygonObstacle.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\PolygonObstacle.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\PolygonObstacle.cpp)
-         HighResCounter.cpp
+     1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\GridDatabase2D.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\GridDatabase2D.cpp)
+         C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\GridDatabase2D.cpp)
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\obstacles/PolygonObstacle.h(62): warning C4251: 'PolygonObstacle::_points': class 'std::vector<Util::Point,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'PolygonObstacle'
                  with
                  [
@@ -90,9 +93,6 @@
                  [
                      _Ty=Util::Vector
                  ] (compiling source file ..\..\src\PolygonObstacle.cpp)
-     1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\GridDatabase2D.cpp)
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\GridDatabase2D.cpp)
-         C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\GridDatabase2D.cpp)
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\SimulationMetricsCollector.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\SimulationMetricsCollector.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\SimulationMetricsCollector.cpp)
@@ -134,16 +134,16 @@
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\RecFileReader.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\RecFileReader.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\RecFileReader.cpp)
-     1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\RecFileWriter.cpp)
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\RecFileWriter.cpp)
-         C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\RecFileWriter.cpp)
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\XMLParser.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\XMLParser.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\XMLParser.cpp)
+     1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\RecFileWriter.cpp)
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\RecFileWriter.cpp)
+         C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\RecFileWriter.cpp)
+         TestCaseWriter.cpp
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\TestCaseReader.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\TestCaseReader.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\TestCaseReader.cpp)
-         TestCaseWriter.cpp
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\TestCaseReaderPrivate.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\TestCaseReaderPrivate.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\TestCaseReaderPrivate.cpp)
@@ -186,18 +186,18 @@
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\BoxObstacle.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\BoxObstacle.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\BoxObstacle.cpp)
-         RecFilePlayerModule.cpp
      1>..\..\src\SimulationEngine.cpp(162): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+         RecFilePlayerModule.cpp
+     1>..\..\src\SimulationEngine.cpp(1005): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+     1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\SimulationOptions.cpp)
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\CircleObstacle.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\CircleObstacle.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\CircleObstacle.cpp)
-     1>..\..\src\SimulationEngine.cpp(1005): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-     1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\SimulationOptions.cpp)
+         SimulationRecorderModule.cpp
      1>..\..\src\TestCaseWriter.cpp(35): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
          C:\Program Files (x86)\Windows Kits\10\Include\10.0.10150.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
      1>..\..\src\TestCaseWriter.cpp(54): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
          C:\Program Files (x86)\Windows Kits\10\Include\10.0.10150.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-         SimulationRecorderModule.cpp
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\OrientedBoxObstacle.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\OrientedBoxObstacle.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\OrientedBoxObstacle.cpp)
@@ -212,10 +212,10 @@
      1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\SimulationRecorderModule.cpp)
          tinystr.cpp
          tinyxml.cpp
+         tinyxmlerror.cpp
      1>C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(57): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface class 'Util::GenericException' (compiling source file ..\..\src\TestCasePlayerModule.cpp)
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception' (compiling source file ..\..\src\TestCasePlayerModule.cpp)
          C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\include\util/GenericException.h(56): note: see declaration of 'Util::GenericException' (compiling source file ..\..\src\TestCasePlayerModule.cpp)
-         tinyxmlerror.cpp
      1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\RecFilePlayerModule.cpp)
      1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\TestCasePlayerModule.cpp)
          tinyxmlparser.cpp
@@ -267,11 +267,11 @@
          Release\tinyxmlparser.obj
             Creating library C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\build\win32\Release\steerlib.lib and object C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\build\win32\Release\steerlib.exp
          Generating code
-         All 9054 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+         All 9076 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
          Finished generating code
          steerlib.vcxproj -> C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\build\win32\Release\steerlib.dll
      1>Done Building Project "C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\steerlib\build\win32\steerlib.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:15.43
+Time Elapsed 00:00:16.18
