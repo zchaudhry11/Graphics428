@@ -21,14 +21,10 @@ SteerLib::GJK_EPA::GJK_EPA()
 //Look at the GJK_EPA.h header file for documentation and instructions
 bool SteerLib::GJK_EPA::intersect(float& return_penetration_depth, Util::Vector& return_penetration_vector, const std::vector<Util::Vector>& _shapeA, const std::vector<Util::Vector>& _shapeB)
 {
-	
 	bool is_colliding = GJK(_shapeA, _shapeB);
 	
 	if (is_colliding)
 	{
-		//Draw simplex
-
-
 		//EPA here
 		return_penetration_vector = EPA(_shapeA, _shapeB, _simplex, return_penetration_depth, return_penetration_vector);
 		//std::cout << "\n ShapeA: " << _shapeA[0]; //Check which shape is drawn
@@ -63,8 +59,10 @@ Util::Vector SteerLib::GJK_EPA::EPA(const std::vector<Util::Vector>& _shapeA, co
 		Util::Vector edgePoint = SteerLib::GJK_EPA::GJK_Support(_shapeA, _shapeB, closestEdge.normal); //Get point towards the edge
 
 		float distance = Util::dot(edgePoint, closestEdge.normal);
-		if (distance - closestEdge.distance < 0.0000000001)
+
+		if (distance - closestEdge.distance < 0.00001)
 		{
+			//std::cout << "\n eP " << edgePoint << " cE " << closestEdge.normal;
 			return_penetration_depth = distance;
 			return closestEdge.normal;
 		}
@@ -99,12 +97,17 @@ SteerLib::GJK_EPA::Edge SteerLib::GJK_EPA::getClosestEdge(std::vector<Util::Vect
 		Util::Vector nEdge = edge.operator-();
 		//-A(B*C) + B(A*C)
 		Util::Vector normal = nEdge.operator*(Util::dot(pointA, edge)) + pointA.operator*(Util::dot(edge, edge));
+		//Util::Vector normal = pointA.operator*(Util::dot(nEdge, edge)) - edge.operator*(Util::dot(nEdge, pointA));
+		
+		
+
 		normal = Util::normalize(normal);
 
 		float distance = Util::dot(normal, pointB);
-
+		
 		if (distance < closestEdge.distance)
 		{
+			//std::cout << "\n normal dist: " << distance;
 			closestEdge.distance = distance;
 			closestEdge.normal = normal;
 			closestEdge.nVertIndex = next;
@@ -116,7 +119,7 @@ SteerLib::GJK_EPA::Edge SteerLib::GJK_EPA::getClosestEdge(std::vector<Util::Vect
 
 bool SteerLib::GJK_EPA::GJK(const std::vector<Util::Vector>& _shapeA, const std::vector<Util::Vector>& _shapeB)
 {
-	Util::Vector direction = Util::Vector(1, 0, -1); //Set arbitrary direction
+	Util::Vector direction = Util::Vector(1, 0, -1); //Set direction
 
 	_simplex.push_back(GJK_Support(_shapeA, _shapeB, direction)); //Add first vertex in simplex
 
@@ -240,7 +243,7 @@ Util::Vector SteerLib::GJK_EPA::getFarthestPoint(const std::vector<Util::Vector>
 	float distance = Util::dot(_shape[0], direction);
 	int vertex = 0;
 
-	//Loop through all vertices in a shape and find which one is the farthest away from our direction
+	//Loop through all vertices in a shape and find which one is the farthest away from direction
 	for (int i = 0; i < _shape.size(); i++)
 	{
 		float newDist = Util::dot(_shape[i], direction);
@@ -252,4 +255,98 @@ Util::Vector SteerLib::GJK_EPA::getFarthestPoint(const std::vector<Util::Vector>
 	}
 
 	return _shape[vertex];
+}
+
+std::vector<Util::Vector> SteerLib::GJK_EPA::getClosestOrigin(const std::vector<Util::Vector>& _shapeA, const std::vector<Util::Vector>& _shapeB)
+{
+	//Shape sorting
+	std::vector<Util::Vector> shapeA = _shapeA;
+	std::vector<Util::Vector> shapeB = _shapeB;
+
+	Util::Point o = Util::Point(0, 0, 0);
+	Util::Point a = Util::Point(_shapeA[0].x, _shapeA[0].y, _shapeA[0].z);
+	Util::Point b = Util::Point(_shapeB[0].x, _shapeB[0].y, _shapeB[0].z);
+
+	Util::Vector pointA;
+	float minXA = 9999;
+	float maxXA = -9999;
+	float minZA = 9999;
+	float maxZA = -9999;
+
+	Util::Vector pointB;
+	float minXB = 9999;
+	float maxXB = -9999;
+	float minZB = 9999;
+	float maxZB = -9999;
+
+	for (int i = 0; i < _shapeA.size(); i++)
+	{
+		if (_shapeA[i].x < minXA)
+		{
+			minXA = _shapeA[i].x;
+			pointA = _shapeA[i];
+		}
+
+		if (_shapeA[i].x > maxXA)
+		{
+			maxXB = _shapeA[i].x;
+		}
+
+		if (_shapeA[i].z < minZA)
+		{
+			minZA = _shapeA[i].z;
+		}
+
+		if (_shapeA[i].z > maxZA)
+		{
+			maxZB = _shapeA[i].z;
+		}
+	}
+
+	for (int i = 0; i < _shapeB.size(); i++)
+	{
+		if (_shapeB[i].x < minXB)
+		{
+			minXB = _shapeB[i].x;
+			pointB = _shapeB[i];
+		}
+
+		if (_shapeB[i].x > maxXB)
+		{
+			maxXB = _shapeB[i].x;
+		}
+
+		if (_shapeB[i].z < minZB)
+		{
+			minZB = _shapeB[i].z;
+		}
+
+		if (_shapeB[i].z > maxZB)
+		{
+			maxZB = _shapeB[i].z;
+		}
+	}
+
+	float Ax = minXA + (maxXA - minXA) / 2;
+	float Az = minZA + (maxXA - minZA) / 2;
+
+	float Bx = minXB + (maxXB - minXB) / 2;
+	float Bz = minZB + (maxXB - minZB) / 2;
+
+	a.x = pointA.x;
+	a.z = pointA.z;
+
+	b.x = pointB.x;
+	b.z = pointB.z;
+
+	float distance = Util::distanceSquaredBetween(a, o);
+	float dist2 = Util::distanceSquaredBetween(b, o);
+
+	std::cout << "\n Ax: " << Ax << " Az: " << Az << " Bx: " << Bx << " Bz: " << Bz;
+
+	std::cout << "\n shapeA: " << pointA << " shapeB: " << pointB;
+
+	std::cout << "\n dA: " << distance << " dB: " << dist2;
+
+	return _shapeA;
 }

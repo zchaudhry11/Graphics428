@@ -149,6 +149,8 @@ namespace SteerLib
 
 			static SteerLib::GJK_EPA::Edge getClosestEdge(std::vector<Util::Vector> simplex);
 
+			static std::vector<Util::Vector> getClosestOrigin(const std::vector<Util::Vector>& _shapeA, const std::vector<Util::Vector>& _shapeB);
+
         private:
 
     }; // class GJK_EPA

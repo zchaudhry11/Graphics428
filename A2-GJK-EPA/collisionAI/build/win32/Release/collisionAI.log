@@ -1,4 +1,4 @@
-﻿Build started 10/25/2015 11:10:04 PM.
+﻿Build started 10/26/2015 10:11:13 PM.
      1>Project "C:\Users\zchau\Documents\GitHub\A2-GJK-EPA\collisionAI\build\win32\collisionAI.vcxproj" on node 8 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /I..\..\..\util\include /I..\..\include /I..\..\..\steerlib\include /I..\..\..\external /Zi /nologo /W3 /WX- /MP /O2 /Oi /Ot /GL /D ENABLE_GUI /D _WINDLL /D _MBCS /Gm- /EHsc /MD /GS /Gy /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /errorReport:prompt ..\..\src\CollisionAgent.cpp ..\..\src\CollisionAIModule.cpp
@@ -7,12 +7,12 @@
          CollisionAgent.cpp
      1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
          CollisionAIModule.cpp
-     1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\UtilGlobals.h(17): warning C4005: 'UTIL_API': macro redefinition (compiling source file ..\..\src\CollisionAIModule.cpp)
-         c:\users\zchau\documents\github\a2-gjk-epa\steerlib\include\Globals.h(22): note: see previous definition of 'UTIL_API' (compiling source file ..\..\src\CollisionAIModule.cpp)
      1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\UtilGlobals.h(17): warning C4005: 'UTIL_API': macro redefinition (compiling source file ..\..\src\CollisionAgent.cpp)
          c:\users\zchau\documents\github\a2-gjk-epa\steerlib\include\Globals.h(22): note: see previous definition of 'UTIL_API' (compiling source file ..\..\src\CollisionAgent.cpp)
-     1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\CollisionAIModule.cpp)
+     1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\UtilGlobals.h(17): warning C4005: 'UTIL_API': macro redefinition (compiling source file ..\..\src\CollisionAIModule.cpp)
+         c:\users\zchau\documents\github\a2-gjk-epa\steerlib\include\Globals.h(22): note: see previous definition of 'UTIL_API' (compiling source file ..\..\src\CollisionAIModule.cpp)
      1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\CollisionAgent.cpp)
+     1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(85): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data (compiling source file ..\..\src\CollisionAIModule.cpp)
      1>c:\users\zchau\documents\github\a2-gjk-epa\util\include\LogObject.h(43): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data (compiling source file ..\..\src\CollisionAIModule.cpp)
          ..\..\src\CollisionAIModule.cpp(183): note: see reference to function template instantiation 'void LogObject::addLogData<__int64>(T)' being compiled
                  with
@@ -41,4 +41,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:08.37
+Time Elapsed 00:00:08.74
