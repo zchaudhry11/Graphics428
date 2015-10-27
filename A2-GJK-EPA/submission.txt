@@ -1,2 +1,57 @@
+Part A:
+steersim -testcase polygons1 -ai collisionAI
+
+loaded module collisionAI
+loaded module testCasePlayer
+Initializing...
+Preprocessing...
+ NO collision detected between polygon No.0 and No.1
+ Collision detected between polygon No.0 and No.2 with a penetration depth of 7
+and penetration vector of (1,0,0)
+ NO collision detected between polygon No.0 and No.3
+ NO collision detected between polygon No.0 and No.4
+ NO collision detected between polygon No.0 and No.5
+ Collision detected between polygon No.1 and No.2 with a penetration depth of 2.
+12132 and penetration vector of (0.707107,0,-0.707107)
+ NO collision detected between polygon No.1 and No.3
+ NO collision detected between polygon No.1 and No.4
+ Collision detected between polygon No.1 and No.5 with a penetration depth of 5
+and penetration vector of (1,0,0)
+ NO collision detected between polygon No.2 and No.3
+ NO collision detected between polygon No.2 and No.4
+ Collision detected between polygon No.2 and No.5 with a penetration depth of 0.
+707107 and penetration vector of (-0.707107,0,-0.707107)
+ NO collision detected between polygon No.3 and No.4
+ NO collision detected between polygon No.3 and No.5
+ NO collision detected between polygon No.4 and No.5
+Simulation is running...
+Postprocessing...
+Simulated 323 frames.
+Cleaning up...
+Done.
+
+
+Part B:
+steersim -testcase polygons2 -ai collisionAI
+
+loaded module collisionAI
+loaded module testCasePlayer
+Initializing...
+Preprocessing...
+ Collision detected between polygon No.0 and No.1 with a penetration depth of 3.
+16228 and penetration vector of (-0.316228,0,-0.948683)
+Simulation is running...
+Postprocessing...
+Simulated 200 frames.
+Cleaning up...
+Done.
+
 Part C:
-The difference in the results of Part A and Part B is that Part A involves collision between properly defined convex shapes whereas Part B involves two shapes which are self-intersecting and concave. In order to fix the polygons2.xml testcase, one can move the vertex definitions around so that the edges are drawn in an order that prevents self-intersection which can be seen from the culling errors. Afterwards, one can do any changes that would turn the concave shape into a convex one. We simply removed an existing vertex and moved one of the other vertices in order to obtain a convex shape. After doing this, the test case now works as expected.
+The difference in the results of Part A and Part B is that Part A involves collision 
+between properly defined convex shapes whereas Part B involves two shapes which are 
+self-intersecting and concave. In order to fix the polygons2.xml testcase, one can 
+move the vertex definitions around so that the edges are drawn in an order that 
+prevents self-intersection which can be seen from the culling errors. Afterwards, one 
+can do any changes that would turn the concave shape into a convex one. We simply 
+removed an existing vertex and moved one of the other vertices in order to obtain a 
+convex shape. After doing this, the test case now works as expected.
