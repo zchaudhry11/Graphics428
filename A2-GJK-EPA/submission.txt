@@ -1,28 +1,24 @@
 Part A:
-steersim -testcase polygons1 -ai collisionAI
+./steersim -testcase polygons1.xml -ai collisionAI
 
 loaded module collisionAI
 loaded module testCasePlayer
 Initializing...
 Preprocessing...
  NO collision detected between polygon No.0 and No.1
- Collision detected between polygon No.0 and No.2 with a penetration depth of 7
-and penetration vector of (1,0,0)
+ NO collision detected between polygon No.0 and No.2
  NO collision detected between polygon No.0 and No.3
  NO collision detected between polygon No.0 and No.4
  NO collision detected between polygon No.0 and No.5
- Collision detected between polygon No.1 and No.2 with a penetration depth of 2.
-12132 and penetration vector of (0.707107,0,-0.707107)
- NO collision detected between polygon No.1 and No.3
- NO collision detected between polygon No.1 and No.4
- Collision detected between polygon No.1 and No.5 with a penetration depth of 5
-and penetration vector of (1,0,0)
+ NO collision detected between polygon No.1 and No.2
+ Collision detected between polygon No.1 and No.3 with a penetration depth of 0.707107 and penetration vector of (0.707107,0,0.707107)
+ Collision detected between polygon No.1 and No.4 with a penetration depth of 2 and penetration vector of (0,0,-1)
+ NO collision detected between polygon No.1 and No.5
  NO collision detected between polygon No.2 and No.3
  NO collision detected between polygon No.2 and No.4
- Collision detected between polygon No.2 and No.5 with a penetration depth of 0.
-707107 and penetration vector of (-0.707107,0,-0.707107)
- NO collision detected between polygon No.3 and No.4
- NO collision detected between polygon No.3 and No.5
+ NO collision detected between polygon No.2 and No.5
+ Collision detected between polygon No.3 and No.4 with a penetration depth of 4.47214 and penetration vector of (0.447214,0,0.894427)
+ Collision detected between polygon No.3 and No.5 with a penetration depth of 1.41421 and penetration vector of (0.707107,0,-0.707107)
  NO collision detected between polygon No.4 and No.5
 Simulation is running...
 Postprocessing...
@@ -31,22 +27,38 @@ Cleaning up...
 Done.
 
 
+
 Part B:
-steersim -testcase polygons2 -ai collisionAI
+./steersim -testcase polygons2.xml -ai collisionAI
 
 loaded module collisionAI
 loaded module testCasePlayer
 Initializing...
 Preprocessing...
- Collision detected between polygon No.0 and No.1 with a penetration depth of 3.
-16228 and penetration vector of (-0.316228,0,-0.948683)
+ Collision detected between polygon No.0 and No.1 with a penetration depth of 3.16228 and penetration vector of (0.316228,0,0.948683)
 Simulation is running...
 Postprocessing...
-Simulated 200 frames.
+Simulated 2154 frames.
 Cleaning up...
 Done.
 
+
 Part C:
+./steersim -testcase polygons2fix.xml -ai collisionAI
+
+loaded module collisionAI
+loaded module testCasePlayer
+Initializing...
+Preprocessing...
+ NO collision detected between polygon No.0 and No.1
+Simulation is running...
+Postprocessing...
+Simulated 2716 frames.
+Cleaning up...
+Done.
+
+
+
 The difference in the results of Part A and Part B is that Part A involves collision 
 between properly defined convex shapes whereas Part B involves two shapes which are 
 self-intersecting and concave. In order to fix the polygons2.xml testcase, one can 
