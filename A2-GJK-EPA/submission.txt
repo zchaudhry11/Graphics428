@@ -26,8 +26,6 @@ Simulated 323 frames.
 Cleaning up...
 Done.
 
-
-
 Part B:
 ./steersim -testcase polygons2.xml -ai collisionAI
 
@@ -41,7 +39,6 @@ Postprocessing...
 Simulated 2154 frames.
 Cleaning up...
 Done.
-
 
 Part C:
 ./steersim -testcase polygons2fix.xml -ai collisionAI
@@ -57,8 +54,6 @@ Simulated 2716 frames.
 Cleaning up...
 Done.
 
-
-
 The difference in the results of Part A and Part B is that Part A involves collision 
 between properly defined convex shapes whereas Part B involves two shapes which are 
 self-intersecting and concave. In order to fix the polygons2.xml testcase, one can 
@@ -67,3 +62,5 @@ prevents self-intersection which can be seen from the culling errors. Afterwards
 can do any changes that would turn the concave shape into a convex one. We simply 
 removed an existing vertex and moved one of the other vertices in order to obtain a 
 convex shape. After doing this, the test case now works as expected.
+
+Blog:http://teamassignments.blogspot.com/
