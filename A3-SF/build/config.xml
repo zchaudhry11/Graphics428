@@ -93,7 +93,7 @@ Options specified by the command line will override options in this configuratio
         <sizeX>200</sizeX>
         <!-- Total size of the grid along the Z axis -->
         <sizeZ>200</sizeZ>
-        <draw>false</draw>
+        <draw>true</draw>
     </gridDatabase>
     <gui>
     <!--
