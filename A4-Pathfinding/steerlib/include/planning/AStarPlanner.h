@@ -95,7 +95,19 @@ namespace SteerLib
 				append_to_path : An optional argument to append to agent_path instead of overwriting it.
 			*/
 
+			struct Node
+			{
+				Util::Point position;
+				int gCost;
+				int hCost;
+				int fCost;
+				bool isDiag;
+			};
+
 			bool computePath(std::vector<Util::Point>& agent_path, Util::Point start, Util::Point goal, SteerLib::GridDatabase2D * _gSpatialDatabase, bool append_to_path = false);
+
+			int computeHCost(int heuristic, Node start, Util::Point target);
+
 		private:
 			SteerLib::GridDatabase2D * gSpatialDatabase;
 	};
