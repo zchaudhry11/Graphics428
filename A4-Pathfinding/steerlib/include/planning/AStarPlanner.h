@@ -97,6 +97,7 @@ namespace SteerLib
 
 			struct Node
 			{
+				Node() : id(-1) {}
 				Util::Point position;
 				int gCost;
 				int hCost;

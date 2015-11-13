@@ -77,50 +77,46 @@ namespace SteerLib
 		
 		std::deque<Node> openNodes; //List of nodes to visit and their priority
 		std::vector<Node> visitedNodes; //List of nodes that have already been visited
-		std::vector<int> cost; //Current g cost of path
 		Node currNode;
 		std::vector<Node> neighbors;
-
-		std::vector<Node> finalPath;
-
 		std::map<int, int> costSoFar; //Id, priority
 
 		//Add start node to queue
 		Node startNode;
+
 		startNode.position = start;
-		startNode.gCost = 0;
+		startNode.gCost = 0; //should be 0
 		startNode.hCost = computeHCost(0, startNode, goal);
+
 		std::cout << "\n Calculating start hCost: " << startNode.hCost;
+
 		startNode.fCost = startNode.gCost + startNode.fCost;
 		startNode.isDiag = false;
 		startNode.id = 0;
 
-		cost.push_back(0);
 		openNodes.push_back(startNode);
-
-		finalPath.push_back(startNode);
-
 		agent_path.push_back(start);
 		costSoFar[0] = 0;
 
 		//Loop until there are no more nodes to visit
 		while (openNodes.size() > 0)
 		{
-			//currNode = openNodes.front(); //Get the next unvisited node
-
 			//Select node with lowest fCost
 			int lowest = 9999;
+			int index = 0;
 			for (int b = 0; b < openNodes.size(); b++)
 			{
+				//std::cout << "\n POTENTIAL NODE: " << openNodes[b].id << " fCost: " << openNodes[b].fCost << " hCost: " << openNodes[b].hCost << " gCost: " << openNodes[b].gCost;
 				if (openNodes[b].fCost < lowest) //For later part, add equality check and compare g/h costs
 				{
 					lowest = openNodes[b].fCost;
 					currNode = openNodes[b];
+					index = b;
 				}
 			}
 
-			openNodes.pop_front(); //Remove item from open list
-
+			openNodes.erase(openNodes.begin() + index);
+			std::cout << "\n OPEN SIZE: " << openNodes.size();
 			std::cout << "\n currNodeID: " << currNode.id << " currNodePOS: " << currNode.position;
 
 			visitedNodes.push_back(currNode);
@@ -158,7 +154,7 @@ namespace SteerLib
 				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
 				neighborNode.isDiag = false;
 				neighborNode.id = currNode.id + 1;
-				std::cout << "\n ID: " << neighborNode.id;
+				costSoFar[neighborNode.id] = neighborNode.gCost;
 				neighbors.push_back(neighborNode);
 
 				//Reset values for the next check
@@ -184,6 +180,7 @@ namespace SteerLib
 				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
 				neighborNode.isDiag = false;
 				neighborNode.id = currNode.id + 2;
+				costSoFar[neighborNode.id] = neighborNode.gCost;
 				neighbors.push_back(neighborNode);
 
 				//Reset values for the next check
@@ -211,7 +208,13 @@ namespace SteerLib
 				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
 				neighborNode.isDiag = false;
 				neighborNode.id = currNode.id + 3;
+				costSoFar[neighborNode.id] = neighborNode.gCost;
 				neighbors.push_back(neighborNode);
+
+				if (neighborNode.id == 3)
+				{
+					std::cout << " \n travCost: " << travCost << " gcost: " << neighborNode.gCost << " hCost: " << neighborNode.hCost << " ID: " << neighborNode.id << " POS: " << neighborNode.position;
+				}
 
 				//Reset values for the next check
 				neighborZCoord += 2; //Check cell at (x, z+1)
@@ -236,6 +239,7 @@ namespace SteerLib
 				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
 				neighborNode.isDiag = false;
 				neighborNode.id = currNode.id + 4;
+				costSoFar[neighborNode.id] = neighborNode.gCost;
 				neighbors.push_back(neighborNode);
 
 				//Reset values for the next check
@@ -245,25 +249,27 @@ namespace SteerLib
 
 			//If diagonals are enabled, then also check points at (x-1, z-1), (x-1, z+1), (x+1, z-1), and (x+1, z+1)
 
-			/*
-			if (openNodes.size() > 20)
+			
+			if (visitedNodes.size() > 2000)
 			{
 				break;
 			}
-			*/
+			
 			//Loop through neighbors and see if they are usable nodes
 			for (int i = 0; i < neighbors.size(); i++)
 			{
-				//std::cout << "\n visited: " << visitedNodes.size();
+				std::cout << "\n visited: " << visitedNodes.size();
+				//std::cout << "\n v: " << visitedNodes[0].position;
+				//std::cout << "\n v5: " << visitedNodes[1].position;
 				//std::cout << "\n open: " << openNodes.size();
 				//std::cout << "\n nPos: " << neighbors[i].position;
-				std::cout << "\n neighbors: " << neighbors.size();
+				//std::cout << "\n neighbors: " << neighbors.size();
 
 				bool nodeVisited = false;
 
 				for (int q = 0; q < visitedNodes.size(); q++)
 				{
-					if (visitedNodes[q].id == neighbors[i].id)
+					if (visitedNodes[q].position.operator==(neighbors[i].position))
 					{
 						nodeVisited = true;
 					}
@@ -289,14 +295,16 @@ namespace SteerLib
 					if (neighbors[i].isDiag == false)
 					{
 						//newCost = currNode.gCost + 1;
+
 						newCost = costSoFar[currNode.id] + 1;
 					}
 					else
 					{
 						newCost = currNode.gCost + DIAG_COST;
-					}					
-
-					if (newCost < neighbors[i].gCost)
+					}	
+					newCost = costSoFar[currNode.id] + 1;
+					std::cout << "\n newCost: " << newCost << " nCost: " << costSoFar[neighbors[i].id] << " ID: " << neighbors[i].id;
+					if (newCost < costSoFar[neighbors[i].id])
 					{
 						//Add node to agent_path
 						std::cout << "\n NEW COST!";
@@ -305,10 +313,8 @@ namespace SteerLib
 						neighbors[i].fCost = neighbors[i].gCost + neighbors[i].hCost;
 						openNodes.push_back(neighbors[i]);
 						agent_path.push_back(neighbors[i].position);
-						finalPath.push_back(neighbors[i]);
-						//visitedNodes.push_back(neighbors[i]);
 					}
-					/*else if (currNode.id == 0)
+					else if (currNode.id == 0)
 					{
 						std::cout << "\n IS START NODE!";
 						neighbors[i].gCost = newCost;
@@ -317,12 +323,14 @@ namespace SteerLib
 						openNodes.push_back(neighbors[i]);
 						std::cout << "\n ID: " << neighbors[i].id << " POS: " << neighbors[i].position;
 						agent_path.push_back(neighbors[i].position);
-						finalPath.push_back(neighbors[i]);
-					}*/
+					}
 					else
 					{
 						//Node wasnt selected
-						std::cout << "\n REJECTED: " << neighbors[i].id << " POS: " << neighbors[i].gCost;
+						std::cout << "\n REJECTED: " << neighbors[i].id << " gCost: " << neighbors[i].gCost << " hCost: " << neighbors[i].hCost;
+
+						openNodes.push_back(neighbors[i]);
+						//visitedNodes.push_back(neighbors[i]);
 					}
 				}
 			}
@@ -333,6 +341,10 @@ namespace SteerLib
 		}
 
 		std::cout << "\n FINISHED!";
+
+		//Clean duplicate entries out of path
+
+
 		//agent_path.push_back(goal);
 		return true;
 	}
@@ -345,13 +357,19 @@ namespace SteerLib
 
 		unsigned int startX, startZ, targetX, targetZ;
 
+		int startXi, startZi, targetXi, targetZi;
+
 		gSpatialDatabase->getGridCoordinatesFromIndex(startIndex, startX, startZ);
 		gSpatialDatabase->getGridCoordinatesFromIndex(targetIndex, targetX, targetZ);
 
 		//Find Manhatten Distance
 		if (heuristic == 0)
 		{
-			return (int)(fabs(startX - targetX) + fabs(startZ - targetZ));
+			startXi = startX; startZi = startZ; targetXi = targetX; targetZi = targetZ;
+
+			int finalH = (abs(startXi - targetXi) + abs(startZi - targetZi));
+
+			return finalH;
 		}
 		else if (heuristic == 1) //Find Euclidean Distance
 		{
