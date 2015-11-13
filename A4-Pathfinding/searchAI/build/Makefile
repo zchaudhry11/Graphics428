@@ -78,7 +78,6 @@ DEFINES := $(BUILD_SCRIPT_DEFINES)
 # PREFIX EACH INCLUDE DIRECTORY WITH "-I".
 INCLUDES := $(SEARCHAI_INCLUDES)
 
-
 # Flags passed to the compiler.
 # -D defines and -I include options should go in DEFINES and INCLUDES, not here.
 CFLAGS := $(BASIC_CFLAGS)

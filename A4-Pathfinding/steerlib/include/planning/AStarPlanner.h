@@ -102,6 +102,8 @@ namespace SteerLib
 				int hCost;
 				int fCost;
 				bool isDiag;
+				unsigned int id;
+
 			};
 
 			bool computePath(std::vector<Util::Point>& agent_path, Util::Point start, Util::Point goal, SteerLib::GridDatabase2D * _gSpatialDatabase, bool append_to_path = false);

@@ -15,7 +15,7 @@
 #define MAX_SPEED 0.13f
 #define AGENT_MASS 1.0f
 #define GOAL_REGION 0.1f
-#define DURATION 15
+#define DURATION 3 //default was 15
 
 SearchAgent::SearchAgent()
 {
@@ -92,10 +92,9 @@ void SearchAgent::computePlan()
 {
 	std::cout<<"\nComputing agent plan ";
 	Util::Point global_goal = _goalQueue.front().targetLocation;
-
 	if(astar.computePath(__path, __position, _goalQueue.front().targetLocation, gSpatialDatabase))
 	{
-		std::cout << "\n ENTERED COMPUTEPLAN!";
+
 		while(!_goalQueue.empty())
 			_goalQueue.pop();
 		
