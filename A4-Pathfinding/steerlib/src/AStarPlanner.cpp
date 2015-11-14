@@ -80,11 +80,17 @@ namespace SteerLib
 		Node currNode;
 		std::vector<Node> neighbors;
 		std::map<int, int> costSoFar; //Id, priority
-
+		std::map<int, int> parents; //ID of node, value = parent of that node. -1 means no parent
 		//Add start node to queue
 		Node startNode;
 
-		startNode.position = start;
+		Util::Point startPos;
+		unsigned int startX, startZ, startIndex;
+		startIndex = gSpatialDatabase->getCellIndexFromLocation(start);
+		gSpatialDatabase->getGridCoordinatesFromIndex(startIndex, startX, startZ);
+		gSpatialDatabase->getLocationFromIndex(startIndex, startPos);
+
+		startNode.position = startPos;
 		startNode.gCost = 0; //should be 0
 		startNode.hCost = computeHCost(0, startNode, goal);
 
@@ -95,12 +101,25 @@ namespace SteerLib
 		startNode.id = 0;
 
 		openNodes.push_back(startNode);
-		agent_path.push_back(start);
+		agent_path.push_back(startNode.position);
 		costSoFar[0] = 0;
+		parents[0] = -1; //start node has no parent
+
+		//Set goal node
+		Node goalNode;
+		Util::Point goalPos;
+		unsigned int goalX, goalZ, goalIndex;
+		goalIndex = gSpatialDatabase->getCellIndexFromLocation(goal);
+		gSpatialDatabase->getGridCoordinatesFromIndex(goalIndex, goalX, goalZ);
+		gSpatialDatabase->getLocationFromIndex(goalIndex, goalPos);
+		goalNode.id = 99999;
+		goalNode.position = goalPos;
+		std::cout << "\n GOAL: " << goalPos;
 
 		//Loop until there are no more nodes to visit
 		while (openNodes.size() > 0)
 		{
+			/*
 			//Select node with lowest fCost
 			int lowest = 9999;
 			int index = 0;
@@ -114,17 +133,21 @@ namespace SteerLib
 					index = b;
 				}
 			}
-
-			openNodes.erase(openNodes.begin() + index);
-			std::cout << "\n OPEN SIZE: " << openNodes.size();
-			std::cout << "\n currNodeID: " << currNode.id << " currNodePOS: " << currNode.position;
-
-			visitedNodes.push_back(currNode);
+			*/
+			//currNode = openNodes.front();
+			visitedNodes.push_back(openNodes.front());
+			openNodes.pop_front();
+			//openNodes.erase(openNodes.begin() + index);
+			//std::cout << "\n OPEN SIZE: " << openNodes.size();
+			//std::cout << "\n visited: " << visitedNodes.size();
+			//std::cout << "\n currNodeID: " << currNode.id << " currNodePOS: " << currNode.position;
 
 			//Found goal
-			if (currNode.position.operator==(goal))
+			if (currNode.position.operator==(goalPos))
 			{
 				std::cout << "\n GOAL REACHED!";
+				parents[goalNode.id] = currNode.id; //Set parent node
+				//return false;
 				break;
 			}
 
@@ -156,6 +179,9 @@ namespace SteerLib
 				neighborNode.id = currNode.id + 1;
 				costSoFar[neighborNode.id] = neighborNode.gCost;
 				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+
+				parents[neighborNode.id] = currNode.id; //Set parent node
 
 				//Reset values for the next check
 				neighborXCoord += 2; //Check cell at (x+1, z)
@@ -182,6 +208,9 @@ namespace SteerLib
 				neighborNode.id = currNode.id + 2;
 				costSoFar[neighborNode.id] = neighborNode.gCost;
 				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+
+				parents[neighborNode.id] = currNode.id; //Set parent node
 
 				//Reset values for the next check
 				neighborXCoord = currXCoord; //Check cell at (x, z-1)
@@ -210,11 +239,9 @@ namespace SteerLib
 				neighborNode.id = currNode.id + 3;
 				costSoFar[neighborNode.id] = neighborNode.gCost;
 				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
 
-				if (neighborNode.id == 3)
-				{
-					std::cout << " \n travCost: " << travCost << " gcost: " << neighborNode.gCost << " hCost: " << neighborNode.hCost << " ID: " << neighborNode.id << " POS: " << neighborNode.position;
-				}
+				parents[neighborNode.id] = currNode.id; //Set parent node
 
 				//Reset values for the next check
 				neighborZCoord += 2; //Check cell at (x, z+1)
@@ -241,33 +268,148 @@ namespace SteerLib
 				neighborNode.id = currNode.id + 4;
 				costSoFar[neighborNode.id] = neighborNode.gCost;
 				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+
+				parents[neighborNode.id] = currNode.id; //Set parent node
 
 				//Reset values for the next check
 				neighborZCoord += 2; //Check cell at (x, z+1)
 				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
 			}
+			else //Not a traversible node
+			{
+				//Reset values for the next check
+				//neighborZCoord += 1; //Check cell at (x-1, z-1)
+				neighborXCoord -= 1;
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+
+			if (travCost >= 0 && travCost < COLLISION_COST)
+			{
+				//Add neighbor to list
+				Node neighborNode;
+				Util::Point neighborPos;
+				gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos);
+				neighborNode.position = neighborPos;
+				neighborNode.gCost = travCost + currNode.gCost;
+				neighborNode.hCost = computeHCost(0, neighborNode, goal);
+				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
+				neighborNode.isDiag = true;
+				neighborNode.id = currNode.id + 5;
+				costSoFar[neighborNode.id] = neighborNode.gCost;
+				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+
+				parents[neighborNode.id] = currNode.id; //Set parent node
+
+				//Reset values for the next check
+				neighborZCoord += 2; //Check cell at (x-1, z+1)
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+			else //Not a traversible node
+			{
+				//Reset values for the next check
+				neighborZCoord += 2; //Check cell at (x-1, z+1)
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+
+			if (travCost >= 0 && travCost < COLLISION_COST)
+			{
+				//Add neighbor to list
+				Node neighborNode;
+				Util::Point neighborPos;
+				gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos);
+				neighborNode.position = neighborPos;
+				neighborNode.gCost = travCost + currNode.gCost;
+				neighborNode.hCost = computeHCost(0, neighborNode, goal);
+				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
+				neighborNode.isDiag = true;
+				neighborNode.id = currNode.id + 6;
+				costSoFar[neighborNode.id] = neighborNode.gCost;
+				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+
+				parents[neighborNode.id] = currNode.id; //Set parent node
+
+				//Reset values for the next check
+				neighborZCoord -= 2; //Check cell at (x+1, z-1)
+				neighborXCoord += 2;
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+			else //Not a traversible node
+			{
+				//Reset values for the next check
+				neighborZCoord -= 2; //Check cell at (x+1, z-1)
+				neighborXCoord += 2;
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+			if (travCost >= 0 && travCost < COLLISION_COST)
+			{
+				//Add neighbor to list
+				Node neighborNode;
+				Util::Point neighborPos;
+				gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos);
+				neighborNode.position = neighborPos;
+				neighborNode.gCost = travCost + currNode.gCost;
+				neighborNode.hCost = computeHCost(0, neighborNode, goal);
+				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
+				neighborNode.isDiag = true;
+				neighborNode.id = currNode.id + 7;
+				costSoFar[neighborNode.id] = neighborNode.gCost;
+				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+
+				parents[neighborNode.id] = currNode.id; //Set parent node
+
+				//Reset values for the next check
+				neighborXCoord += 2; //Check cell at (x+1, z+1)
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+			else //Not a traversible node
+			{
+				//Reset values for the next check
+				neighborXCoord += 2; //Check cell at (x+1, z+1)
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+			/*
+			if (travCost >= 0 && travCost < COLLISION_COST)
+			{
+				//Add neighbor to list
+				Node neighborNode;
+				Util::Point neighborPos;
+				gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos);
+				neighborNode.position = neighborPos;
+				neighborNode.gCost = travCost + currNode.gCost;
+				neighborNode.hCost = computeHCost(0, neighborNode, goal);
+				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
+				neighborNode.isDiag = true;
+				neighborNode.id = currNode.id + 8;
+				costSoFar[neighborNode.id] = neighborNode.gCost;
+				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+
+				parents[neighborNode.id] = currNode.id; //Set parent node
+			}
+			*/
 
 			//If diagonals are enabled, then also check points at (x-1, z-1), (x-1, z+1), (x+1, z-1), and (x+1, z+1)
-
 			
-			if (visitedNodes.size() > 2000)
+			if (visitedNodes.size() > 1200000)
 			{
-				break;
+				//break;
 			}
-			
+
 			//Loop through neighbors and see if they are usable nodes
 			for (int i = 0; i < neighbors.size(); i++)
 			{
-				std::cout << "\n visited: " << visitedNodes.size();
-				//std::cout << "\n v: " << visitedNodes[0].position;
-				//std::cout << "\n v5: " << visitedNodes[1].position;
+				//std::cout << "\n visited: " << visitedNodes.size();
 				//std::cout << "\n open: " << openNodes.size();
 				//std::cout << "\n nPos: " << neighbors[i].position;
 				//std::cout << "\n neighbors: " << neighbors.size();
 
 				bool nodeVisited = false;
 
-				for (int q = 0; q < visitedNodes.size(); q++)
+				for (int q = 0; q < visitedNodes.size()-1; q++)
 				{
 					if (visitedNodes[q].position.operator==(neighbors[i].position))
 					{
@@ -276,76 +418,65 @@ namespace SteerLib
 				}
 
 				//Check if neighbor was previously visited
-				if (nodeVisited)
+				if (nodeVisited == true)
 				{
-					std::cout << "\n VISITED OLD NODE!";
-					/*
-					for (int b = 0; b < openNodes.size(); b++)
-					{
-						openNodes.pop_front();
-					}
-					*/
+					//std::cout << "\n VISITED OLD NODE!";
 					
 					continue;
 				}
 				else //Neighbor was not visited before
 				{
-					int newCost = 0;
-
-					if (neighbors[i].isDiag == false)
-					{
-						//newCost = currNode.gCost + 1;
-
-						newCost = costSoFar[currNode.id] + 1;
-					}
-					else
-					{
-						newCost = currNode.gCost + DIAG_COST;
-					}	
-					newCost = costSoFar[currNode.id] + 1;
-					std::cout << "\n newCost: " << newCost << " nCost: " << costSoFar[neighbors[i].id] << " ID: " << neighbors[i].id;
-					if (newCost < costSoFar[neighbors[i].id])
-					{
-						//Add node to agent_path
-						std::cout << "\n NEW COST!";
-						neighbors[i].gCost = newCost;
-						neighbors[i].hCost = computeHCost(0, neighbors[i], goal);
-						neighbors[i].fCost = neighbors[i].gCost + neighbors[i].hCost;
-						openNodes.push_back(neighbors[i]);
-						agent_path.push_back(neighbors[i].position);
-					}
-					else if (currNode.id == 0)
-					{
-						std::cout << "\n IS START NODE!";
-						neighbors[i].gCost = newCost;
-						neighbors[i].hCost = computeHCost(0, neighbors[i], goal);
-						neighbors[i].fCost = neighbors[i].gCost + neighbors[i].hCost;
-						openNodes.push_back(neighbors[i]);
-						std::cout << "\n ID: " << neighbors[i].id << " POS: " << neighbors[i].position;
-						agent_path.push_back(neighbors[i].position);
-					}
-					else
-					{
-						//Node wasnt selected
-						std::cout << "\n REJECTED: " << neighbors[i].id << " gCost: " << neighbors[i].gCost << " hCost: " << neighbors[i].hCost;
-
-						openNodes.push_back(neighbors[i]);
-						//visitedNodes.push_back(neighbors[i]);
-					}
+					//Add node to agent_path
+					//std::cout << "\n ADDED NODE!";
+					//neighbors[i].gCost = newCost;
+					neighbors[i].hCost = computeHCost(0, neighbors[i], goal);
+					neighbors[i].fCost = neighbors[i].gCost + neighbors[i].hCost;
+					openNodes.push_back(neighbors[i]);
+					//agent_path.push_back(neighbors[i].position);
+					visitedNodes.push_back(neighbors[i]);
+				}
+				if (visitedNodes.size() > 1200000)
+				{
+					//break;
 				}
 			}
-
 			neighbors.clear(); //Clear list of neighbors for the next node
 			// Remove current node from open list and add it to closed list
-
 		}
 
-		std::cout << "\n FINISHED!";
+		//std::cout << "\n FINISHED!";
 
-		//Clean duplicate entries out of path
+		int pathIndex = parents[goalNode.id];
+		std::vector<Util::Point> finalPath;
+		finalPath.push_back(goalNode.position);
+		int numNodes = 0;
+		while (pathIndex != -1)
+		{
+			for (int i = 0; i < visitedNodes.size()-1; i++)
+			{
+				if (visitedNodes[i].id == pathIndex && pathIndex != -1)
+				{
+					numNodes++;
+					finalPath.push_back(visitedNodes[i].position);
+					pathIndex = parents[visitedNodes[i].id];
+					break;
+				}
+			}
+		}
 
+		finalPath.push_back(startNode.position);
 
-		//agent_path.push_back(goal);
+		while (numNodes > 0)
+		{
+			//std::cout << "\n fP: " << finalPath[i];
+			if (numNodes - 1 >= 0)
+			{
+				agent_path.push_back(finalPath[numNodes - 1]);
+			}
+			
+			numNodes--;
+		}
+
 		return true;
 	}
 
