@@ -162,16 +162,17 @@ namespace SteerLib
 			unsigned int neighborZCoord = currZCoord;
 			float travCost = 0;
 
+			Node neighborNode;
+			Util::Point neighborPos;
+
 			neighborXCoord--; //Check cell at (x-1, z)
 			travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
 
 			//Check if neighboring cell is a node. Obstacles have a traversal cost of 1000
-			if (travCost >= 0 && travCost < COLLISION_COST)
+			gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos); //(x-1, z)
+			if (travCost >= 0 && travCost < COLLISION_COST && canBeTraversed(gSpatialDatabase->getCellIndexFromLocation(neighborPos))) 
 			{
-				//Add neighbor to list
-				Node neighborNode;
-				Util::Point neighborPos;
-				gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos);
+				//Add neighbor to list				
 				neighborNode.position = neighborPos;
 				neighborNode.gCost = travCost + currNode.gCost;
 				neighborNode.hCost = computeHCost(0, neighborNode, goal);
@@ -183,25 +184,25 @@ namespace SteerLib
 				neighbors.push_back(neighborNode);
 				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
 
-				//parents[neighborNode.id] = currNode.id; //Set parent node
-
 				//Reset values for the next check
-				neighborXCoord += 2; //Check cell at (x+1, z)
+				neighborXCoord = currXCoord; //Check cell at (x+1, z)
+				neighborZCoord = currZCoord;
+				neighborXCoord += 1; 
 				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
 			}
 			else //Not a traversible node
 			{
 				//Reset values for the next check
-				neighborXCoord += 2; //Check cell at (x+1, z)
+				neighborXCoord = currXCoord; //Check cell at (x+1, z)
+				neighborZCoord = currZCoord;
+				neighborXCoord += 1;
 				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
 			}
 
-			if (travCost >= 0 && travCost < COLLISION_COST)
+			gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos); //(x+1, z)
+			if (travCost >= 0 && travCost < COLLISION_COST && canBeTraversed(gSpatialDatabase->getCellIndexFromLocation(neighborPos))) 
 			{
 				//Add neighbor to list
-				Node neighborNode;
-				Util::Point neighborPos;
-				gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos);
 				neighborNode.position = neighborPos;
 				neighborNode.gCost = travCost + currNode.gCost;
 				neighborNode.hCost = computeHCost(0, neighborNode, goal);
@@ -213,27 +214,25 @@ namespace SteerLib
 				neighbors.push_back(neighborNode);
 				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
 
-				//parents[neighborNode.id] = currNode.id; //Set parent node
-
 				//Reset values for the next check
 				neighborXCoord = currXCoord; //Check cell at (x, z-1)
-				neighborZCoord--;
+				neighborZCoord = currZCoord;
+				neighborZCoord -= 1;
 				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
 			}
 			else //Not a traversible node
 			{
 				//Reset values for the next check
-				neighborXCoord = currXCoord; //Check cell at (x, z-1)
-				neighborZCoord--;
+				neighborXCoord = currXCoord;//Check cell at (x, z-1)
+				neighborZCoord = currZCoord;
+				neighborZCoord -= 1;
 				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
 			}
 
-			if (travCost >= 0 && travCost < COLLISION_COST)
+			gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos); //(x, z-1)
+			if (travCost >= 0 && travCost < COLLISION_COST && canBeTraversed(gSpatialDatabase->getCellIndexFromLocation(neighborPos)))
 			{
 				//Add neighbor to list
-				Node neighborNode;
-				Util::Point neighborPos;
-				gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos);
 				neighborNode.position = neighborPos;
 				neighborNode.gCost = travCost + currNode.gCost;
 				neighborNode.hCost = computeHCost(0, neighborNode, goal);
@@ -245,25 +244,25 @@ namespace SteerLib
 				neighbors.push_back(neighborNode);
 				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
 
-				//parents[neighborNode.id] = currNode.id; //Set parent node
-
 				//Reset values for the next check
-				neighborZCoord += 2; //Check cell at (x, z+1)
+				neighborXCoord = currXCoord; //Check cell at (x, z+1)
+				neighborZCoord = currZCoord;
+				neighborZCoord += 1; 
 				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
 			}
 			else //Not a traversible node
 			{
 				//Reset values for the next check
-				neighborZCoord += 2; //Check cell at (x, z+1)
+				neighborXCoord = currXCoord; //Check cell at (x, z+1)
+				neighborZCoord = currZCoord;
+				neighborZCoord += 1;
 				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
 			}
 
-			if (travCost >= 0 && travCost < COLLISION_COST)
+			gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos); //(x, z+1)
+			if (travCost >= 0 && travCost < COLLISION_COST && canBeTraversed(gSpatialDatabase->getCellIndexFromLocation(neighborPos))) 
 			{
 				//Add neighbor to list
-				Node neighborNode;
-				Util::Point neighborPos;
-				gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos);
 				neighborNode.position = neighborPos;
 				neighborNode.gCost = travCost + currNode.gCost;
 				neighborNode.hCost = computeHCost(0, neighborNode, goal);
@@ -275,21 +274,134 @@ namespace SteerLib
 				neighbors.push_back(neighborNode);
 				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
 
-				//parents[neighborNode.id] = currNode.id; //Set parent node
-
 				//Reset values for the next check
-				neighborZCoord += 2; //Check cell at (x, z+1)
+				neighborXCoord = currXCoord; //Check cell at (x-1, z-1)
+				neighborZCoord = currZCoord;
+				neighborXCoord -= 1;
+				neighborZCoord -= 1;
 				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
 			}
 			else //Not a traversible node
 			{
 				//Reset values for the next check
-				//neighborZCoord += 1; //Check cell at (x-1, z-1)
+				neighborXCoord = currXCoord; //Check cell at (x-1, z-1)
+				neighborZCoord = currZCoord;
 				neighborXCoord -= 1;
+				neighborZCoord -= 1;
 				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
 			}
 
-			//If diagonals are enabled, then also check points at (x-1, z-1), (x-1, z+1), (x+1, z-1), and (x+1, z+1)
+			gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos); //(x-1, z-1)
+			if (travCost >= 0 && travCost < COLLISION_COST && canBeTraversed(gSpatialDatabase->getCellIndexFromLocation(neighborPos))) 
+			{
+				//Add neighbor to list
+				neighborNode.position = neighborPos;
+				neighborNode.gCost = travCost + currNode.gCost;
+				neighborNode.hCost = computeHCost(0, neighborNode, goal);
+				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
+				neighborNode.isDiag = true;
+				//neighborNode.id = currNode.id + 5;
+				neighborNode.id = gSpatialDatabase->getCellIndexFromLocation(neighborNode.position);
+				costSoFar[neighborNode.id] = neighborNode.gCost;
+				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+
+				//Reset values for the next check
+				neighborXCoord = currXCoord;
+				neighborZCoord = currZCoord;
+				neighborZCoord += 1; //Check cell at (x-1, z+1)
+				neighborXCoord -= 1;
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+			else //Not a traversible node
+			{
+				//Reset values for the next check
+				neighborXCoord = currXCoord;
+				neighborZCoord = currZCoord;
+				neighborZCoord += 1; //Check cell at (x-1, z+1)
+				neighborXCoord -= 1;
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+			
+			gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos); //(x-1, z+1)
+			if (travCost >= 0 && travCost < COLLISION_COST && canBeTraversed(gSpatialDatabase->getCellIndexFromLocation(neighborPos)))
+			{
+				//Add neighbor to list
+				neighborNode.position = neighborPos;
+				neighborNode.gCost = travCost + currNode.gCost;
+				neighborNode.hCost = computeHCost(0, neighborNode, goal);
+				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
+				neighborNode.isDiag = true;
+				//neighborNode.id = currNode.id + 6;
+				neighborNode.id = gSpatialDatabase->getCellIndexFromLocation(neighborNode.position);
+				costSoFar[neighborNode.id] = neighborNode.gCost;
+				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+
+				//Reset values for the next check
+				neighborXCoord = currXCoord;
+				neighborZCoord = currZCoord;
+				neighborZCoord -= 1; //Check cell at (x+1, z-1)
+				neighborXCoord += 1;
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+			else //Not a traversible node
+			{
+				//Reset values for the next check
+				neighborXCoord = currXCoord;
+				neighborZCoord = currZCoord;
+				neighborZCoord -= 1; //Check cell at (x+1, z-1)
+				neighborXCoord += 1;
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+
+			gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos); //(x+1, z-1)
+			if (travCost >= 0 && travCost < COLLISION_COST && canBeTraversed(gSpatialDatabase->getCellIndexFromLocation(neighborPos)))
+			{
+				//Add neighbor to list
+				neighborNode.position = neighborPos;
+				neighborNode.gCost = travCost + currNode.gCost;
+				neighborNode.hCost = computeHCost(0, neighborNode, goal);
+				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
+				neighborNode.isDiag = true;
+				//neighborNode.id = currNode.id + 7;
+				neighborNode.id = gSpatialDatabase->getCellIndexFromLocation(neighborNode.position);
+				costSoFar[neighborNode.id] = neighborNode.gCost;
+				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+
+				//Reset values for the next check
+				neighborXCoord = currXCoord;
+				neighborZCoord = currZCoord;
+				neighborZCoord += 1; //Check cell at (x+1, z+1)
+				neighborXCoord += 1;
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+			else //Not a traversible node
+			{
+				//Reset values for the next check
+				neighborXCoord = currXCoord;
+				neighborZCoord = currZCoord;
+				neighborZCoord += 1; //Check cell at (x+1, z+1)
+				neighborXCoord += 1;
+				travCost = gSpatialDatabase->getTraversalCost(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord));
+			}
+
+			gSpatialDatabase->getLocationFromIndex(gSpatialDatabase->getCellIndexFromGridCoords(neighborXCoord, neighborZCoord), neighborPos); //(x+1, z+1)
+			if (travCost >= 0 && travCost < COLLISION_COST && canBeTraversed(gSpatialDatabase->getCellIndexFromLocation(neighborPos)))
+			{
+				//Add neighbor to list
+				neighborNode.position = neighborPos;
+				neighborNode.gCost = travCost + currNode.gCost;
+				neighborNode.hCost = computeHCost(0, neighborNode, goal);
+				neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
+				neighborNode.isDiag = true;
+				//neighborNode.id = currNode.id + 8;
+				neighborNode.id = gSpatialDatabase->getCellIndexFromLocation(neighborNode.position);
+				costSoFar[neighborNode.id] = neighborNode.gCost;
+				neighbors.push_back(neighborNode);
+				//std::cout << " \n travCost: " << travCost << " ID: " << neighborNode.id;
+			}
 
 			//Loop through neighbors and see if they are usable nodes
 			for (int i = 0; i < neighbors.size(); i++)
@@ -300,7 +412,6 @@ namespace SteerLib
 				//std::cout << "\n neighbors: " << neighbors.size();
 
 				bool nodeVisited = false;
-
 				for (int q = 0; q < visitedNodes.size()-1; q++)
 				{
 					if (visitedNodes[q].position.operator==(neighbors[i].position))
@@ -348,12 +459,11 @@ namespace SteerLib
 					numNodes++;
 					finalPath.push_back(visitedNodes[i].position);
 					pathIndex = parents[visitedNodes[i].id];
-					std::cout << "\n visited ID: " << visitedNodes[i].id;
+					//std::cout << "\n visited ID: " << visitedNodes[i].id;
 					break;
 				}
 			}
-			std::cout << "\n path: " << pathIndex;
-			
+			//std::cout << "\n path: " << pathIndex;
 		}
 
 		for (int i = 0; i < visitedNodes.size() - 1; i++)
@@ -361,16 +471,11 @@ namespace SteerLib
 			//std::cout << "\n vnID: " << visitedNodes[i].id;
 		}
 
-		std::cout << "\n goalP: " << parents[goalNode.id];
-		std::cout << "\n prevP: " << parents[parents[goalNode.id]];
-		std::cout << "\n prevprevP: " << parents[parents[parents[goalNode.id]]];
-		std::cout << "\n prevprevprevP: " << parents[parents[parents[parents[goalNode.id]]]];
-		std::cout << "\n prevprevprevprevP: " << parents[parents[parents[parents[parents[goalNode.id]]]]];
 		std::map<int, int>::iterator it;
 
 		for (it = parents.begin(); it != parents.end(); it++)
 		{
-			std::cout << "\n nodeID: " << it->first << " parentNode: " << it->second;
+			//std::cout << "\n nodeID: " << it->first << " parentNode: " << it->second;
 		}
 
 		finalPath.push_back(startNode.position);
