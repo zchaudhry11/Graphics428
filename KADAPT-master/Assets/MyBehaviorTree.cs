@@ -36,7 +36,7 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                Debug.Log("Oh fuck, the fuzz! They're about " + temp + " ft away!");
+                //Debug.Log("Oh fuck, the fuzz! They're about " + temp + " ft away!");
                 caught = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
@@ -45,7 +45,7 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                Debug.Log("Hello there fellow");
+                //Debug.Log("Hello there fellow");
                 greet = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
@@ -54,7 +54,7 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                Debug.Log("Howdy copper!");
+                //Debug.Log("Howdy copper!");
                 greet = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
@@ -66,7 +66,7 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                Debug.Log("Heheheh");
+                //Debug.Log("Heheheh");
                 greet = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
@@ -75,7 +75,7 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                Debug.Log("GET OVER HERE YOU RUFFIAN");
+                //Debug.Log("GET OVER HERE YOU RUFFIAN");
                 caught = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
@@ -84,7 +84,7 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                Debug.Log("Oh no!");
+                //Debug.Log("Oh no!");
                 rob = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
@@ -96,7 +96,7 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                Debug.Log("Gimme monies plz");
+                //Debug.Log("Gimme monies plz");
                 rob = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
@@ -105,7 +105,7 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                Debug.Log("Hello there fellow");
+                //Debug.Log("Hello there fellow");
                 greet = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
@@ -114,7 +114,7 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                Debug.Log("Howdy friend!");
+                //Debug.Log("Howdy friend!");
                 greet = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
@@ -124,7 +124,7 @@ public class MyBehaviorTree : MonoBehaviour
 	protected Node ST_ApproachAndWait(Transform target)
 	{
 		Val<Vector3> position = Val.V (() => target.position);
-        return new Sequence(participant.GetComponent<BehaviorMecanim>().Node_GoTo(position), new LeafWait(1000));
+        return new Sequence(participant.GetComponent<BehaviorMecanim>().Node_GoTo(position), new LeafWait(10));
 	}
 
     double ReturnClosestLawman()
@@ -181,6 +181,24 @@ public class MyBehaviorTree : MonoBehaviour
         return distance;
     }
 
+    protected Node ST_Rob(Transform target)
+    {
+        Val<Vector3> position = Val.V(() => target.position);
+        return new Sequence(participant.GetComponent<BehaviorMecanim>().Node_GoTo(position), new LeafWait(1000));
+    }
+
+    protected Node ST_Arrest(Transform target)
+    {
+        Val<Vector3> position = Val.V(() => target.position);
+        return new Sequence(participant.GetComponent<BehaviorMecanim>().Node_GoTo(position), new LeafWait(10000));
+    }
+
+    protected Node ST_Greet()
+    {
+        //Val<Vector3> position = Val.V(() => target.position);
+        return new Sequence(participant.GetComponent<BehaviorMecanim>().Node_GoTo(null), new LeafWait(100));
+    }
+
     protected Node BuildTreeRoot()
 	{
 
@@ -189,14 +207,19 @@ public class MyBehaviorTree : MonoBehaviour
             if (caught)
             {
                 Debug.Log("Bandit - Oh fuck, the fuzz! About " + ReturnClosestLawman() + " away");
-                return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
+                ST_Arrest(wander5);
+                caught = false;
             }
             if (greet) {
                 Debug.Log("Bandit - Heheheh");
+                ST_Greet();
+                greet = false;
             }
             if (rob)
             {
                 Debug.Log("Bandit - Gimme monie plz");
+                ST_Rob(wander3);
+                rob = false;
             }
             return new DecoratorLoop(
                 new SequenceShuffle(
@@ -213,17 +236,20 @@ public class MyBehaviorTree : MonoBehaviour
             if (caught)
             {
                 Debug.Log("Police - Found you ruffian! About " + ReturnClosestBandit() + " away");
+                ST_Arrest(wander5);
                 caught = false;
-                return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
+                
             }
             if (greet)
             {
                 Debug.Log("Police - Hello there");
+                ST_Greet();
                 greet = false;
             }
             if (rob)
             {
                 Debug.Log("Police - Wait what");
+                ST_Greet();
                 rob = false;
             }
             return new DecoratorLoop(
@@ -241,11 +267,13 @@ public class MyBehaviorTree : MonoBehaviour
             if (greet)
             {
                 Debug.Log("Civilian - Hi There!");
+                ST_Greet();
                 greet = false;
             }
             if (rob)
             {
                 Debug.Log("Civilian - Oh no!");
+                ST_Rob(wander3);
                 rob = false;
             }
             return new DecoratorLoop(
