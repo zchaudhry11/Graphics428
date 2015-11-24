@@ -15,6 +15,10 @@ public class MyBehaviorTree : MonoBehaviour
     public GameObject participant;
 
 	private BehaviorAgent behaviorAgent;
+    private bool caught = false;
+    private bool greet = false;
+    private bool rob = false;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -32,7 +36,8 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                Debug.Log("Oh fuck, the fuzz! They're about "+temp+" ft away!");
+                Debug.Log("Oh fuck, the fuzz! They're about " + temp + " ft away!");
+                caught = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
         }
@@ -40,7 +45,8 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                //Debug.Log("Hello there fellow");
+                Debug.Log("Hello there fellow");
+                greet = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
         }
@@ -48,7 +54,68 @@ public class MyBehaviorTree : MonoBehaviour
         {
             if (temp < 75)
             {
-                //Debug.Log("The police!");
+                Debug.Log("Howdy copper!");
+                greet = true;
+                //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
+            }
+        }
+
+        temp = ReturnClosestBandit();
+
+        if (occupation == "bandit")
+        {
+            if (temp < 75)
+            {
+                Debug.Log("Heheheh");
+                greet = true;
+                //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
+            }
+        }
+        if (occupation == "lawman")
+        {
+            if (temp < 75)
+            {
+                Debug.Log("GET OVER HERE YOU RUFFIAN");
+                caught = true;
+                //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
+            }
+        }
+        if (occupation == "")
+        {
+            if (temp < 75)
+            {
+                Debug.Log("Oh no!");
+                rob = true;
+                //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
+            }
+        }
+
+        temp = ReturnClosestWanderer();
+
+        if (occupation == "bandit")
+        {
+            if (temp < 75)
+            {
+                Debug.Log("Gimme monies plz");
+                rob = true;
+                //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
+            }
+        }
+        if (occupation == "lawman")
+        {
+            if (temp < 75)
+            {
+                Debug.Log("Hello there fellow");
+                greet = true;
+                //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
+            }
+        }
+        if (occupation == "")
+        {
+            if (temp < 75)
+            {
+                Debug.Log("Howdy friend!");
+                greet = true;
                 //return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
         }
@@ -116,58 +183,80 @@ public class MyBehaviorTree : MonoBehaviour
 
     protected Node BuildTreeRoot()
 	{
-		
+
         if (occupation == "bandit")
         {
-            if (ReturnClosestLawman() < 75)
+            if (caught)
             {
-                Debug.Log("Oh fuck, the fuzz! About " + ReturnClosestLawman() + " away");
+                Debug.Log("Bandit - Oh fuck, the fuzz! About " + ReturnClosestLawman() + " away");
                 return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
-            else {
-                return new DecoratorLoop(
-                    new SequenceShuffle(
-                        this.ST_ApproachAndWait(this.wander1),
-                        this.ST_ApproachAndWait(this.wander2),
-                        this.ST_ApproachAndWait(this.wander3),
-                        this.ST_ApproachAndWait(this.wander4)
-                     )
-                );
+            if (greet) {
+                Debug.Log("Bandit - Heheheh");
             }
+            if (rob)
+            {
+                Debug.Log("Bandit - Gimme monie plz");
+            }
+            return new DecoratorLoop(
+                new SequenceShuffle(
+                    this.ST_ApproachAndWait(this.wander1),
+                    this.ST_ApproachAndWait(this.wander2),
+                    this.ST_ApproachAndWait(this.wander3),
+                    this.ST_ApproachAndWait(this.wander4)
+                )
+            );
         }
 
         else if(occupation == "law")
         {
-            if (ReturnClosestBandit() < 75)
+            if (caught)
             {
-                Debug.Log("Gon git dat bandit! About "+ReturnClosestBandit()+" away");
-                return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander2)));
-            }
-            else {
+                Debug.Log("Police - Found you ruffian! About " + ReturnClosestBandit() + " away");
+                caught = false;
                 return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
             }
+            if (greet)
+            {
+                Debug.Log("Police - Hello there");
+                greet = false;
+            }
+            if (rob)
+            {
+                Debug.Log("Police - Wait what");
+                rob = false;
+            }
+            return new DecoratorLoop(
+                new SequenceShuffle(
+                    this.ST_ApproachAndWait(this.wander1),
+                    this.ST_ApproachAndWait(this.wander2),
+                    this.ST_ApproachAndWait(this.wander3),
+                    this.ST_ApproachAndWait(this.wander4)
+                )
+            );
         }
 
         else
         {
-
-            if (ReturnClosestBandit() < 75)
+            if (greet)
             {
-                Debug.Log("Oh no, a bandit! About " + ReturnClosestBandit() + " away");
-                return new DecoratorLoop(new Sequence(this.ST_ApproachAndWait(this.wander1)));
-
+                Debug.Log("Civilian - Hi There!");
+                greet = false;
             }
-            else {
-                return new DecoratorLoop(
-                    new SequenceShuffle(
-                        this.ST_ApproachAndWait(this.wander1),
-                        this.ST_ApproachAndWait(this.wander2),
-                        this.ST_ApproachAndWait(this.wander3),
-                        this.ST_ApproachAndWait(this.wander4),
-                        this.ST_ApproachAndWait(this.wander5)
-                     )
-                );
+            if (rob)
+            {
+                Debug.Log("Civilian - Oh no!");
+                rob = false;
             }
+            return new DecoratorLoop(
+                new SequenceShuffle(
+                    this.ST_ApproachAndWait(this.wander1),
+                    this.ST_ApproachAndWait(this.wander2),
+                    this.ST_ApproachAndWait(this.wander3),
+                    this.ST_ApproachAndWait(this.wander4),
+                    this.ST_ApproachAndWait(this.wander5)
+                )
+            );
         }
 	}
 }
