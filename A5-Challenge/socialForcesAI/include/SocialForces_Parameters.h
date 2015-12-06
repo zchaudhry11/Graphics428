@@ -20,12 +20,12 @@
 
 #define ACCELERATION 1 // = v/A
 #define PERSONAL_SPACE_THRESHOLD 0.3f // not defined in HiDAC papaer
-#define AGENT_REPULSION_IMPORTANCE 0.1f // in HiDAC
+#define AGENT_REPULSION_IMPORTANCE 0.01f // in HiDAC
 #define QUERY_RADIUS 3.0f // not defined in paper
 #define BODY_FORCE 0.1f // K (big K) 120000 / 80
 #define AGENT_BODY_FORCE 0.1f
 #define SLIDING_FRICTION_FORCE 3000.0f // k (small k) 240000 / 80 = 3000
-#define AGENT_B 1.0f // inverse proximity force importance //Get agents away from each other
+#define AGENT_B 0.75f // inverse proximity force importance //Get agents away from each other
 #define AGENT_A 50.0f // 2000 / 80 Yep its just called A... inverse proximity force importance
 #define WALL_B 0.08f //  inverse proximity force importance
 #define WALL_A 30.0f //  proximity force importance

@@ -17,10 +17,12 @@
 #include <queue>
 #include <list>
 #include "SteerLib.h"
+
 // #include "SimpleAgent.h"
 // #include "SocialForcesAIModule.h"
 #include "SocialForces_Parameters.h"
 
+#include "glm.hpp"
 
 /**
  * @brief Social Forces Agent stuff
@@ -126,6 +128,8 @@ class SocialForcesAgent : public SteerLib::AgentInterface
         std::vector<Util::Point> _midTermPath;
         // holds the location of the best local target along the midtermpath
         Util::Point _currentLocalTarget;
+
+		bool importModel(const char * path, std::vector<glm::vec3> & vertices, std::vector<glm::vec2> & uvs, std::vector<glm::vec3> normals);
 
         friend class SocialForcesAIModule;
 

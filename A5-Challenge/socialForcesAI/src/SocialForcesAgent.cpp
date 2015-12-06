@@ -5,34 +5,29 @@
 // See license.txt for complete license.
 //
 
-
 #include "SocialForcesAgent.h"
 #include "SocialForcesAIModule.h"
 #include "SocialForces_Parameters.h"
 // #include <math.h>
 
-
 // #include "util/Geometry.h"
 
+#include <util/DrawLib.h>
+#include "planning/AStarPlanner.h"
 
 /// @file SocialForcesAgent.cpp
 /// @brief Implements the SocialForcesAgent class.
 
-
 #undef min
 #undef max
 
-
 #define AGENT_MASS 1.0f
-
 
 using namespace Util;
 using namespace SocialForcesGlobals;
 using namespace SteerLib;
 
-
 // #define _DEBUG_ENTROPY 1
-
 
 SocialForcesAgent::SocialForcesAgent()
 {
@@ -52,17 +47,14 @@ SocialForcesAgent::SocialForcesAgent()
 	_enabled = false;
 }
 
-
 SocialForcesAgent::~SocialForcesAgent()
 {
 }
-
 
 void SocialForcesAgent::setParameters(Behaviour behave)
 {
 	this->_SocialForcesParams.setParameters(behave);
 }
-
 
 void SocialForcesAgent::disable()
 {
@@ -79,30 +71,22 @@ void SocialForcesAgent::disable()
 	_enabled = false;
 }
 
-
 void SocialForcesAgent::reset(const SteerLib::AgentInitialConditions & initialConditions, SteerLib::EngineInterface * engineInfo)
 {
+	std::cout << "Reset called!\n";
 	// compute the "old" bounding box of the agent before it is reset.  its OK that it will be invalid if the agent was previously disabled
 	// because the value is not used in that case.
-	// std::cout << "resetting agent " << this << std::endl;
 	_waypoints.clear();
 	_midTermPath.clear();
 
 	Util::AxisAlignedBox oldBounds(_position.x-_radius, _position.x+_radius, 0.0f, 0.5f, _position.z-_radius, _position.z+_radius);
 
 	// initialize the agent based on the initial conditions
-	/*
-	position_ = Vector2(initialConditions.position.x, initialConditions.position.z);
-	radius_ = initialConditions.radius;
-	velocity_ = normalize(Vector2(initialConditions.direction.x, initialConditions.direction.z));
-	velocity_ = velocity_ * initialConditions.speed;
-*/
-	// initialize the agent based on the initial conditions
 	_position = initialConditions.position;
 	_forward = normalize(initialConditions.direction);
 	_radius = initialConditions.radius;
 	_velocity = initialConditions.speed * _forward;
-	// std::cout << "inital colour of agent " << initialConditions.color << std::endl;
+
 	if ( initialConditions.colorSet == true )
 	{
 		this->_color = initialConditions.color;
@@ -138,6 +122,7 @@ void SocialForcesAgent::reset(const SteerLib::AgentInitialConditions & initialCo
 
 	while (!_goalQueue.empty())
 	{
+		//std::cout << "Popping goalqueue!\n";
 		_goalQueue.pop();
 	}
 
@@ -159,21 +144,24 @@ void SocialForcesAgent::reset(const SteerLib::AgentInitialConditions & initialCo
 		}
 	}
 
-	runLongTermPlanning();
+	runLongTermPlanning(); //Get path from A*
 
 	// std::cout << "first waypoint: " << _waypoints.front() << " agents position: " << position() << std::endl;
 	/*
 	 * Must make sure that _waypoints.front() != position(). If they are equal the agent will crash.
 	 * And that _waypoints is not empty
 	 */
+
 	Util::Vector goalDirection;
 	if ( !_midTermPath.empty() )
 	{
+		//std::cout << "midTermPath is not empty!\n";
 		this->updateLocalTarget();
 		goalDirection = normalize( this->_currentLocalTarget - position());
 	}
 	else
 	{
+		//std::cout << "midTermPath is EMPTY!\n";
 		goalDirection = normalize( _goalQueue.front().targetLocation - position());
 	}
 
@@ -197,7 +185,6 @@ void SocialForcesAgent::reset(const SteerLib::AgentInitialConditions & initialCo
 	std::cout << "goal direction is: " << goalDirection << " prefvelocity is: " << prefVelocity_ <<
 			" and current velocity is: " << velocity_ << std::endl;
 #endif
-
 	// std::cout << "Parameter spec: " << _SocialForcesParams << std::endl;
 	// gEngine->addAgent(this, rvoModule);
 	assert(_forward.length()!=0.0f);
@@ -205,12 +192,10 @@ void SocialForcesAgent::reset(const SteerLib::AgentInitialConditions & initialCo
 	assert(_radius != 0.0f);
 }
 
-
 void SocialForcesAgent::calcNextStep(float dt)
 {
     //nothing to do here
 }
-
 
 std::pair<float, Util::Point> minimum_distance(Util::Point l1, Util::Point l2, Util::Point p)
 {
@@ -233,7 +218,6 @@ std::pair<float, Util::Point> minimum_distance(Util::Point l1, Util::Point l2, U
   const Util::Point projection = l1 + t * (l2 - l1);  // Projection falls on the segment
   return std::make_pair((p - projection).length(), projection) ;
 }
-
 
 Util::Vector SocialForcesAgent::calcProximityForce(float dt)
 {
@@ -301,10 +285,8 @@ Util::Vector SocialForcesAgent::calcProximityForce(float dt)
 			}
 		}
 	}
-
 	return away.operator+(away_obs);
 }
-
 
 Vector SocialForcesAgent::calcGoalForce(Vector _goalDirection, float _dt)
 {
@@ -314,7 +296,6 @@ Vector SocialForcesAgent::calcGoalForce(Vector _goalDirection, float _dt)
     return prefForce;
 }
 
-
 Util::Vector SocialForcesAgent::calcRepulsionForce(float dt)
 {
 #ifdef _DEBUG_
@@ -323,7 +304,6 @@ Util::Vector SocialForcesAgent::calcRepulsionForce(float dt)
 #endif
 	return calcWallRepulsionForce(dt) + (_SocialForcesParams.sf_agent_repulsion_importance * calcAgentRepulsionForce(dt));
 }
-
 
 Util::Vector SocialForcesAgent::calcAgentRepulsionForce(float dt)
 {
@@ -367,7 +347,6 @@ Util::Vector SocialForcesAgent::calcAgentRepulsionForce(float dt)
 	return agent_repulsion_force;
 }
 
-
 Util::Vector SocialForcesAgent::calcWallRepulsionForce(float dt)
 {
 	SteerLib::ObstacleInterface * tmp_ob = NULL;
@@ -404,7 +383,6 @@ Util::Vector SocialForcesAgent::calcWallRepulsionForce(float dt)
 	
     return wall_repulsion_force;
 }
-
 
 std::pair<Util::Point, Util::Point> SocialForcesAgent::calcWallPointsFromNormal(SteerLib::ObstacleInterface* obs, Util::Vector normal)
 {
@@ -447,7 +425,6 @@ std::pair<Util::Point, Util::Point> SocialForcesAgent::calcWallPointsFromNormal(
  *
  *
  */
-
 
 Util::Vector SocialForcesAgent::calcWallNormal(SteerLib::ObstacleInterface* obs)
 {
@@ -548,6 +525,117 @@ Util::Vector SocialForcesAgent::calcObsNormal(SteerLib::ObstacleInterface* obs)
 	return normalize(position() - obs_centre);
 }
 
+//Replace glm with util
+bool SocialForcesAgent::importModel(const char * path, std::vector<glm::vec3>& vertices, std::vector<glm::vec2>& uvs, std::vector<glm::vec3> normals)
+{
+	std::vector<unsigned int> vertIndices;
+	std::vector<unsigned int> normIndices;
+	std::vector<unsigned int> uvIndices;
+
+	std::vector<glm::vec3> temp_vert;
+	std::vector<glm::vec3> temp_norm;
+	std::vector<glm::vec2> temp_uv;
+
+	//Try to open file
+	FILE * file = fopen(path, "r");
+
+	if (file == NULL) 
+	{
+		printf("Cannot open file!\n");
+		return false;
+	}
+
+	while (true)
+	{
+		//Read the first word of the line
+		char lineHeader[128];
+
+		int res = fscanf(file, "%s", lineHeader);
+		if (res == EOF)
+		{
+			break; //EOF = End Of File. Quit the loop.
+		}
+		// else : parse lineHeader
+
+		//Parse vertices
+		if (strcmp(lineHeader, "v") == 0)
+		{
+			glm::vec3 vertex;
+			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+			temp_vert.push_back(vertex);
+		}
+
+		//Parse normals
+		else if (strcmp(lineHeader, "vn") == 0)
+		{
+			glm::vec3 normal;
+			fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+			temp_norm.push_back(normal);
+		}
+
+		//Parse uvs
+		else if (strcmp(lineHeader, "vt") == 0)
+		{
+			glm::vec2 uv;
+			fscanf(file, "%f %f\n", &uv.x, &uv.y);
+			temp_uv.push_back(uv);
+		}
+
+		else if (strcmp(lineHeader, "f") == 0)
+		{
+			std::string vertex1, vertex2, vertex3;
+
+			unsigned int vertexIndex[3], normalIndex[3], uvIndex[3];
+
+			int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+
+			if (matches != 9) 
+			{
+				printf("File can't be read!\n");
+				return false;
+			}
+
+			vertIndices.push_back(vertexIndex[0]);
+			vertIndices.push_back(vertexIndex[1]);
+			vertIndices.push_back(vertexIndex[2]);
+
+			normIndices.push_back(normalIndex[0]);
+			normIndices.push_back(normalIndex[1]);
+			normIndices.push_back(normalIndex[2]);
+
+			uvIndices.push_back(uvIndex[0]);
+			uvIndices.push_back(uvIndex[1]);
+			uvIndices.push_back(uvIndex[2]);
+		}	
+	}
+
+	//Loop through all triangle vertices
+	for (unsigned int i = 0; i < vertIndices.size(); i++)
+	{
+		unsigned int vertexIndex = vertIndices[i];
+		glm::vec3 vertex = temp_vert[vertexIndex - 1];
+		vertices.push_back(vertex);
+	}
+
+	//Loop through all triangle normals
+	for (unsigned int i = 0; i < normIndices.size(); i++)
+	{
+		unsigned int normIndex = normIndices[i];
+		glm::vec3 norm = temp_norm[normIndex - 1];
+		normals.push_back(norm);
+	}
+
+	//Loop through all triangle uvs
+	for (unsigned int i = 0; i < uvIndices.size(); i++)
+	{
+		unsigned int uvIndex = uvIndices[i];
+		glm::vec2 uv = temp_uv[uvIndex - 1];
+		uvs.push_back(uv);
+	}
+
+	return true;
+}
+
 
 bool SocialForcesAgent::reachedCurrentWaypoint()
 {
@@ -584,56 +672,61 @@ bool SocialForcesAgent::hasLineOfSightTo(Util::Point target)
 
 void SocialForcesAgent::updateAI(float timeStamp, float dt, unsigned int frameNumber)
 {
+	//std::cout << "Updating AI!\n";
 	// std::cout << "_SocialForcesParams.rvo_max_speed " << _SocialForcesParams._SocialForcesParams.rvo_max_speed << std::endl;
 	Util::AutomaticFunctionProfiler profileThisFunction( &SocialForcesGlobals::gPhaseProfilers->aiProfiler );
 	if (!enabled())
 	{
 		return;
 	}
-
+	//std::cout << "goalqueue size: " << _goalQueue.size() << "\n";
 	Util::AxisAlignedBox oldBounds(_position.x - _radius, _position.x + _radius, 0.0f, 0.0f, _position.z - _radius, _position.z + _radius);
 
 	SteerLib::AgentGoalInfo goalInfo = _goalQueue.front();
 	Util::Vector goalDirection;
+	//std::cout << "midterm pathsize: " << _midTermPath.size() << "\n";
 	if ( ! _midTermPath.empty() && (!this->hasLineOfSightTo(goalInfo.targetLocation)) )
 	{
 		if (reachedCurrentWaypoint())
 		{
+			//std::cout << "Reached current waypoint!\n";
 			this->updateMidTermPath();
 		}
 
 		this->updateLocalTarget();
 
 		goalDirection = normalize(_currentLocalTarget - position());
-
 	}
 	else
 	{
+		//std::cout << "Path is empty!\n";
 		goalDirection = normalize(goalInfo.targetLocation - position());
 	}
 
+	
     /*
      *  Goal Force
      */
+
     Util::Vector prefForce = calcGoalForce( goalDirection, dt );
-	//Util::Vector prefForce = Util::Vector(0,0,0);
+	//prefForce = Util::Vector(0, 0, 0);
+
     /*
      *  Repulsion Force
      */
+
 	Util::Vector repulsionForce = calcRepulsionForce(dt);
-	//Util::Vector repulsionForce = Util::Vector(0, 0, 0);
 
 	if ( repulsionForce.x != repulsionForce.x)
 	{
 		std::cout << "Found some nan" << std::endl;
-		// repulsionForce = velocity() * 0;
 	}
 
     /*
      *  Proximity Force
      */
+
 	Util::Vector proximityForce = calcProximityForce(dt);
-	//Util::Vector proximityForce = Util::Vector(0, 0, 0);
 
 // #define _DEBUG_ 1
 #ifdef _DEBUG_
@@ -709,9 +802,7 @@ void SocialForcesAgent::updateAI(float timeStamp, float dt, unsigned int frameNu
 		_forward = normalize(_velocity);
 	}
 	// _position = _position + (_velocity * dt);
-
 }
-
 
 /**
  * Removes a number of points from the begining of the path
@@ -720,6 +811,8 @@ void SocialForcesAgent::updateAI(float timeStamp, float dt, unsigned int frameNu
  */
 void SocialForcesAgent::updateMidTermPath()
 {
+	//std::cout << "Called updatemidterm path!\n";
+	//std::cout << "Waypoint size: " << _waypoints.size() << "\n";
 	if ( this->_midTermPath.size() < FURTHEST_LOCAL_TARGET_DISTANCE)
 	{
 		return;
@@ -742,9 +835,8 @@ void SocialForcesAgent::updateMidTermPath()
 	{
 		_midTermPath.push_back(tmpPath.at(i));
 	}
-
+	std::cout << "pathsize: " << _midTermPath.size() << "\n";
 }
-
 
 /**
  * Update the local target to the furthest point on the midterm path the agent can see.
@@ -764,7 +856,6 @@ void SocialForcesAgent::updateLocalTarget()
 	}
 }
 
-
 /**
  * finds a path to the current goal
  * puts that path in midTermPath
@@ -777,12 +868,16 @@ bool SocialForcesAgent::runLongTermPlanning()
 	// run the main a-star search here
 	std::vector<Util::Point> agentPath;
 	Util::Point pos =  position();
-
+	/*
 	if ( !gSpatialDatabase->findPath(pos, _goalQueue.front().targetLocation,
 			agentPath, (unsigned int) 50000))
 	{
+		std::cout << "Couldn't find path!\n";
 		return false;
-	}
+	}*/
+	std::cout << "Goalqueue size: " << _goalQueue.size() << "\n";
+	SteerLib::AStarPlanner pathfinder = SteerLib::AStarPlanner();
+	pathfinder.computePath(agentPath, pos, _goalQueue.front().targetLocation, gSpatialDatabase, false);
 
 	for  (int i=1; i <  agentPath.size(); i++)
 	{
@@ -869,8 +964,19 @@ void SocialForcesAgent::draw()
 		}
 		// DrawLib::drawStar(_waypoints.at(i), Util::Vector(1,0,0), 0.34f, gBlue);
 	}
-	else {
+	else 
+	{
+		//Draw agent
 		Util::DrawLib::drawAgentDisc(_position, _radius, this->_color);
+
+		//Read .obj file
+		std::vector< glm::vec3 > vertices;
+		std::vector< glm::vec2 > uvs;
+		std::vector< glm::vec3 > normals; // Won't be used at the moment.
+
+		//bool res = importModel("C:/Users/zchau/Documents/GitHub/A5-Challenge/models/cube.obj", vertices, uvs, normals);
+		//glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+		
 	}
 	if (_goalQueue.front().goalType == SteerLib::GOAL_TYPE_SEEK_STATIC_TARGET) {
 		Util::DrawLib::drawFlag(_goalQueue.front().targetLocation);
