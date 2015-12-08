@@ -15,6 +15,22 @@
 #include <util/DrawLib.h>
 #include "planning/AStarPlanner.h"
 
+#include <vector>
+
+#include "util/Geometry.h"
+#include "util/Color.h"
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#else
+#include <GL/glew.h>
+#include <GL/glut.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
+#include "Globals.h"
+
 /// @file SocialForcesAgent.cpp
 /// @brief Implements the SocialForcesAgent class.
 
@@ -73,7 +89,7 @@ void SocialForcesAgent::disable()
 
 void SocialForcesAgent::reset(const SteerLib::AgentInitialConditions & initialConditions, SteerLib::EngineInterface * engineInfo)
 {
-	std::cout << "Reset called!\n";
+	//std::cout << "Reset called!\n";
 	// compute the "old" bounding box of the agent before it is reset.  its OK that it will be invalid if the agent was previously disabled
 	// because the value is not used in that case.
 	_waypoints.clear();
@@ -525,118 +541,6 @@ Util::Vector SocialForcesAgent::calcObsNormal(SteerLib::ObstacleInterface* obs)
 	return normalize(position() - obs_centre);
 }
 
-//Replace glm with util
-bool SocialForcesAgent::importModel(const char * path, std::vector<glm::vec3>& vertices, std::vector<glm::vec2>& uvs, std::vector<glm::vec3> normals)
-{
-	std::vector<unsigned int> vertIndices;
-	std::vector<unsigned int> normIndices;
-	std::vector<unsigned int> uvIndices;
-
-	std::vector<glm::vec3> temp_vert;
-	std::vector<glm::vec3> temp_norm;
-	std::vector<glm::vec2> temp_uv;
-
-	//Try to open file
-	FILE * file = fopen(path, "r");
-
-	if (file == NULL) 
-	{
-		printf("Cannot open file!\n");
-		return false;
-	}
-
-	while (true)
-	{
-		//Read the first word of the line
-		char lineHeader[128];
-
-		int res = fscanf(file, "%s", lineHeader);
-		if (res == EOF)
-		{
-			break; //EOF = End Of File. Quit the loop.
-		}
-		// else : parse lineHeader
-
-		//Parse vertices
-		if (strcmp(lineHeader, "v") == 0)
-		{
-			glm::vec3 vertex;
-			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-			temp_vert.push_back(vertex);
-		}
-
-		//Parse normals
-		else if (strcmp(lineHeader, "vn") == 0)
-		{
-			glm::vec3 normal;
-			fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
-			temp_norm.push_back(normal);
-		}
-
-		//Parse uvs
-		else if (strcmp(lineHeader, "vt") == 0)
-		{
-			glm::vec2 uv;
-			fscanf(file, "%f %f\n", &uv.x, &uv.y);
-			temp_uv.push_back(uv);
-		}
-
-		else if (strcmp(lineHeader, "f") == 0)
-		{
-			std::string vertex1, vertex2, vertex3;
-
-			unsigned int vertexIndex[3], normalIndex[3], uvIndex[3];
-
-			int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
-
-			if (matches != 9) 
-			{
-				printf("File can't be read!\n");
-				return false;
-			}
-
-			vertIndices.push_back(vertexIndex[0]);
-			vertIndices.push_back(vertexIndex[1]);
-			vertIndices.push_back(vertexIndex[2]);
-
-			normIndices.push_back(normalIndex[0]);
-			normIndices.push_back(normalIndex[1]);
-			normIndices.push_back(normalIndex[2]);
-
-			uvIndices.push_back(uvIndex[0]);
-			uvIndices.push_back(uvIndex[1]);
-			uvIndices.push_back(uvIndex[2]);
-		}	
-	}
-
-	//Loop through all triangle vertices
-	for (unsigned int i = 0; i < vertIndices.size(); i++)
-	{
-		unsigned int vertexIndex = vertIndices[i];
-		glm::vec3 vertex = temp_vert[vertexIndex - 1];
-		vertices.push_back(vertex);
-	}
-
-	//Loop through all triangle normals
-	for (unsigned int i = 0; i < normIndices.size(); i++)
-	{
-		unsigned int normIndex = normIndices[i];
-		glm::vec3 norm = temp_norm[normIndex - 1];
-		normals.push_back(norm);
-	}
-
-	//Loop through all triangle uvs
-	for (unsigned int i = 0; i < uvIndices.size(); i++)
-	{
-		unsigned int uvIndex = uvIndices[i];
-		glm::vec2 uv = temp_uv[uvIndex - 1];
-		uvs.push_back(uv);
-	}
-
-	return true;
-}
-
-
 bool SocialForcesAgent::reachedCurrentWaypoint()
 {
 
@@ -651,7 +555,6 @@ bool SocialForcesAgent::reachedCurrentWaypoint()
 
 	// return (position() - _currentLocalTarget).lengthSquared() < (radius()*radius());
 }
-
 
 bool SocialForcesAgent::hasLineOfSightTo(Util::Point target)
 {
@@ -669,7 +572,6 @@ bool SocialForcesAgent::hasLineOfSightTo(Util::Point target)
 
 }
 
-
 void SocialForcesAgent::updateAI(float timeStamp, float dt, unsigned int frameNumber)
 {
 	//std::cout << "Updating AI!\n";
@@ -685,6 +587,7 @@ void SocialForcesAgent::updateAI(float timeStamp, float dt, unsigned int frameNu
 	SteerLib::AgentGoalInfo goalInfo = _goalQueue.front();
 	Util::Vector goalDirection;
 	//std::cout << "midterm pathsize: " << _midTermPath.size() << "\n";
+	//Attempt to go towards waypoints
 	if ( ! _midTermPath.empty() && (!this->hasLineOfSightTo(goalInfo.targetLocation)) )
 	{
 		if (reachedCurrentWaypoint())
@@ -703,19 +606,22 @@ void SocialForcesAgent::updateAI(float timeStamp, float dt, unsigned int frameNu
 		goalDirection = normalize(goalInfo.targetLocation - position());
 	}
 
-	
     /*
      *  Goal Force
      */
 
     Util::Vector prefForce = calcGoalForce( goalDirection, dt );
 	//prefForce = Util::Vector(0, 0, 0);
+	//prefForce = prefForce.operator*(0.25f);
 
     /*
      *  Repulsion Force
      */
 
 	Util::Vector repulsionForce = calcRepulsionForce(dt);
+	//repulsionForce = Util::Vector(0, 0, 0);
+	//repulsionForce = repulsionForce.operator*(3.0f);
+	//repulsionForce = repulsionForce.operator*(300.0f);
 
 	if ( repulsionForce.x != repulsionForce.x)
 	{
@@ -727,6 +633,9 @@ void SocialForcesAgent::updateAI(float timeStamp, float dt, unsigned int frameNu
      */
 
 	Util::Vector proximityForce = calcProximityForce(dt);
+	//proximityForce = Util::Vector(0, 0, 0);
+	//proximityForce = proximityForce.operator*(0.5f);
+	//proximityForce = proximityForce.operator*(10.5f);
 
 // #define _DEBUG_ 1
 #ifdef _DEBUG_
@@ -741,8 +650,6 @@ void SocialForcesAgent::updateAI(float timeStamp, float dt, unsigned int frameNu
 		alpha=0;
 	}
 
-	//_velocity = (prefForce) + repulsionForce + proximityForce;
-	// _velocity = velocity() + repulsionForce + proximityForce;
 	Util::Vector acceleration = (prefForce + repulsionForce + proximityForce) / AGENT_MASS;
 	_velocity = velocity() + acceleration * dt;
 	_velocity = clamp(velocity(), _SocialForcesParams.sf_max_speed);
@@ -835,7 +742,7 @@ void SocialForcesAgent::updateMidTermPath()
 	{
 		_midTermPath.push_back(tmpPath.at(i));
 	}
-	std::cout << "pathsize: " << _midTermPath.size() << "\n";
+	//std::cout << "pathsize: " << _midTermPath.size() << "\n";
 }
 
 /**
@@ -875,7 +782,7 @@ bool SocialForcesAgent::runLongTermPlanning()
 		std::cout << "Couldn't find path!\n";
 		return false;
 	}*/
-	std::cout << "Goalqueue size: " << _goalQueue.size() << "\n";
+	//std::cout << "Goalqueue size: " << _goalQueue.size() << "\n";
 	SteerLib::AStarPlanner pathfinder = SteerLib::AStarPlanner();
 	pathfinder.computePath(agentPath, pos, _goalQueue.front().targetLocation, gSpatialDatabase, false);
 
@@ -887,9 +794,9 @@ bool SocialForcesAgent::runLongTermPlanning()
 			_waypoints.push_back(agentPath.at(i));
 		}
 	}
+
 	return true;
 }
-
 
 bool SocialForcesAgent::runLongTermPlanning2()
 {
@@ -926,7 +833,6 @@ bool SocialForcesAgent::runLongTermPlanning2()
 	return true;
 
 }
-
 
 void SocialForcesAgent::draw()
 {
@@ -968,15 +874,6 @@ void SocialForcesAgent::draw()
 	{
 		//Draw agent
 		Util::DrawLib::drawAgentDisc(_position, _radius, this->_color);
-
-		//Read .obj file
-		std::vector< glm::vec3 > vertices;
-		std::vector< glm::vec2 > uvs;
-		std::vector< glm::vec3 > normals; // Won't be used at the moment.
-
-		//bool res = importModel("C:/Users/zchau/Documents/GitHub/A5-Challenge/models/cube.obj", vertices, uvs, normals);
-		//glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
-		
 	}
 	if (_goalQueue.front().goalType == SteerLib::GOAL_TYPE_SEEK_STATIC_TARGET) {
 		Util::DrawLib::drawFlag(_goalQueue.front().targetLocation);

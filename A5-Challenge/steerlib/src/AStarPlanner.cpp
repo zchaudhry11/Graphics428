@@ -16,14 +16,14 @@
 #include "planning/AStarPlanner.h"
 
 
-#define COLLISION_COST  1000
+#define COLLISION_COST  1000    //ingress requires 9200
 #define GRID_STEP  1
 #define OBSTACLE_CLEARANCE 1
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
 #define MAX(X,Y) ((X) > (Y) ? (X) : (Y))
 
 #define DIAG_COST 1
-#define HEURISTIC 0
+#define HEURISTIC 0 //0 is MD, 1 is ED
 #define HEURISTIC_WEIGHT 1
 #define TIEBREAKER -1
 
@@ -508,8 +508,8 @@ namespace SteerLib
 			}
 			numNodes--;
 		}
-		std::cout << "\nNumber of expanded nodes: " << visitedNodes.size();
-		std::cout << "\nLength of solution path: " << agent_path.size() << "\n";
+		//std::cout << "\nNumber of expanded nodes: " << visitedNodes.size();
+		//std::cout << "\nLength of solution path: " << agent_path.size() << "\n";
 		return true;
 	}
 
